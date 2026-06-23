@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="HoopNerdz" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <title>HoopNerdz Academy</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a; --card: #111; --border: #222;
+      --gold: #f5c518; --red: #e03030; --blue: #4a90d9;
+      --white: #f0f0f0; --muted: #666; --green: #3ab57a;
+      --orange: #ff8c00;
+      --safe-top: env(safe-area-inset-top);
+      --safe-bottom: env(safe-area-inset-bottom);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; background: var(--bg); color: var(--white); font-family: 'DM Sans', sans-serif; overscroll-behavior: none; }
+    #app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; padding-top: var(--safe-top); }
+    .header { flex-shrink: 0; background: #0a0a0a; border-bottom: 2px solid var(--gold); }
+    .header-logo-wrap { display: flex; justify-content: center; padding: 12px 16px 8px; }
+    .logo-img { width: 200px; max-width: 80%; filter: invert(1); display: block; }
+    .header-action-bar { display: flex; justify-content: flex-end; padding: 0 16px 10px; min-height: 32px; }
+    .content { flex: 1; overflow-y: auto; padding: 16px 16px calc(80px + var(--safe-bottom)); -webkit-overflow-scrolling: touch; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #0d0d0d; border-top: 1px solid var(--border); display: flex; padding-bottom: var(--safe-bottom); z-index: 50; }
+    .bottom-nav button { flex: 1; background: none; border: none; color: var(--muted); padding: 10px 2px 8px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500; cursor: pointer; transition: color 0.15s; }
+    .bottom-nav button.active { color: var(--gold); }
+    .bottom-nav button svg { width: 20px; height: 20px; }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+    .stat-card.tappable { cursor: pointer; transition: all 0.15s; user-select: none; -webkit-user-select: none; }
+    .stat-card.tappable:active { background: #1a1a1a; border-color: var(--gold); }
+    .alert-banner.tappable { cursor: pointer; user-select: none; -webkit-user-select: none; }
+    .alert-banner.tappable:active { opacity: 0.8; }
+    .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 4px; }
+    .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 34px; line-height: 1; }
+    .stat-tap-hint { font-size: 10px; color: var(--muted); margin-top: 4px; }
+    .gold { color: var(--gold); } .red { color: var(--red); } .blue { color: var(--blue); } .green { color: var(--green); }
+    .section-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; margin-top: 4px; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; color: var(--gold); }
+    .btn { border: none; border-radius: 8px; padding: 9px 16px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px; transition: all 0.15s; }
+    .btn-gold { background: var(--gold); color: #000; }
+    .btn-red { background: var(--red); color: #fff; }
+    .btn-outline { background: none; border: 1px solid var(--border); color: var(--white); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .pkg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+    .pkg-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px; text-align: center; }
+    .pkg-name { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+    .pkg-price { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: var(--red); }
+    .pkg-count { font-size: 12px; color: var(--muted); }
+    .pkg-count b { color: var(--white); }
+    .level-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+    .level-chip { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px; text-align: center; }
+    .level-chip-count { font-family: 'Bebas Neue', sans-serif; font-size: 28px; }
+    .level-chip-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .session-list { display: flex; flex-direction: column; gap: 8px; }
+    .session-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .session-name { font-weight: 600; font-size: 14px; }
+    .session-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .session-date { font-size: 12px; color: var(--muted); white-space: nowrap; margin-left: 8px; }
+    .player-list { display: flex; flex-direction: column; gap: 8px; }
+    .player-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .player-card:active { background: #1a1a1a; }
+    .player-name { font-weight: 600; font-size: 15px; }
+    .player-sub { font-size: 12px; color: var(--muted); margin-top: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .badge-beginner { background: #1a3a2a; color: var(--green); }
+    .badge-intermediate { background: #1a2a3a; color: var(--blue); }
+    .badge-advanced { background: #3a1a1a; color: var(--red); }
+    .pip-bar { display: flex; gap: 3px; align-items: center; margin-top: 8px; }
+    .pip { width: 10px; height: 10px; border-radius: 2px; }
+    .pip-used { background: var(--green); }
+    .pip-rem { background: var(--border); }
+    .sessions-right { text-align: right; }
+    .sessions-remaining { font-family: 'Bebas Neue', sans-serif; font-size: 22px; }
+    .back-btn { display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; margin-bottom: 14px; padding: 0; }
+    .detail-name { font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 4px; }
+    .detail-meta { color: var(--muted); font-size: 13px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .detail-stat { background: #0d0d0d; border-radius: 10px; padding: 12px; text-align: center; }
+    .detail-stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 30px; }
+    .detail-stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group { margin-bottom: 12px; }
+    .form-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 5px; }
+    .form-input { width: 100%; background: #0d0d0d; border: 1px solid var(--border); border-radius: 8px; padding: 11px 12px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 16px; outline: none; appearance: none; -webkit-appearance: none; }
+    .form-input:focus { border-color: var(--gold); }
+    .form-input option { background: #0d0d0d; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    textarea.form-input { resize: vertical; min-height: 80px; font-size: 14px; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: flex; align-items: flex-end; padding-bottom: var(--safe-bottom); }
+    .modal { background: #161616; border: 1px solid var(--border); border-radius: 20px 20px 0 0; padding: 24px 20px; width: 100%; max-height: 90vh; overflow-y: auto; animation: slideUp 0.25s ease; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold); margin-bottom: 18px; letter-spacing: 1px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .empty { text-align: center; padding: 48px 20px; color: var(--muted); font-size: 14px; }
+    .empty-icon { font-size: 40px; margin-bottom: 10px; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+    .alert-banner { border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+    .alert-orange { background: #2a1800; border: 1px solid var(--orange); color: var(--orange); }
+    .alert-red { background: #2a0000; border: 1px solid var(--red); color: #ff6666; }
+    .renew-badge { background: #3a1a00; color: var(--orange); padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .pending-badge { background: #1a1a3a; color: var(--blue); padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .master-toggle { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+    .master-toggle-label { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; }
+    .master-toggle-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .toggle-switch { position: relative; width: 52px; height: 28px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 28px; cursor: pointer; transition: 0.3s; }
+    .toggle-slider:before { content: ""; position: absolute; width: 22px; height: 22px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+    input:checked + .toggle-slider { background: var(--green); }
+    input:checked + .toggle-slider:before { transform: translateX(24px); }
+    .schedule-wrap { overflow-x: auto; margin-bottom: 16px; }
+    .schedule-table { width: 100%; border-collapse: collapse; min-width: 320px; }
+    .schedule-table th { font-size: 10px; text-transform: uppercase; color: var(--muted); padding: 6px 6px; border-bottom: 1px solid var(--border); text-align: center; }
+    .schedule-table td { padding: 5px 4px; border-bottom: 1px solid var(--border); text-align: center; }
+    .slot-cell { border-radius: 6px; padding: 5px 3px; display: block; width: 100%; font-weight: 600; font-size: 10px; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+    .slot-open { background: #0a2a15; color: var(--green); }
+    .slot-warn { background: #2a1800; color: var(--orange); }
+    .slot-full { background: #1a1a1a; color: var(--muted); cursor: default; }
+    .slot-closed { background: #2a0000; color: var(--red); }
+    .slot-paused { background: #1a1a1a; color: #444; cursor: default; }
+    .contact-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+    .contact-name { font-weight: 700; font-size: 15px; margin-bottom: 2px; }
+    .contact-parent { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .contact-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .contact-link { font-size: 11px; padding: 4px 10px; border-radius: 20px; text-decoration: none; font-weight: 600; }
+    .contact-phone { background: #0a2a15; color: var(--green); }
+    .contact-email { background: #1a2a3a; color: var(--blue); }
+    .contact-badge { background: #1a1600; color: var(--gold); }
+    .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+    .cal-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 16px; }
+    .cal-day { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; transition: all 0.15s; }
+    .cal-day:active { background: #1a1a1a; }
+    .cal-day.has-sessions { border-color: var(--gold); }
+    .cal-day.today { background: #1a1600; border-color: var(--gold); }
+    .cal-day-name { font-size: 9px; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+    .cal-day-num { font-family: 'Bebas Neue', sans-serif; font-size: 18px; line-height: 1; }
+    .cal-day-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); margin: 3px auto 0; }
+    .cal-slot { background: #0d0d0d; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 8px; }
+    .cal-slot-time { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--gold); letter-spacing: 1px; margin-bottom: 6px; }
+    .cal-slot-player { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .cal-slot-player:last-child { border-bottom: none; }
+    .cal-empty { color: var(--muted); font-size: 12px; padding: 4px 0; }
+    .slot-opt { padding: 10px 12px; background: #0d0d0d; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: all 0.15s; }
+    .slot-opt:active { background: #1a1a1a; }
+    .slot-opt-label { font-weight: 600; font-size: 14px; }
+    .slot-opt-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .slot-opt-tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-left: 6px; }
+    .tag-preferred { background: #1a1600; color: var(--gold); }
+    .tag-open { background: #0a2a15; color: var(--green); }
+    .tag-warn { background: #2a1800; color: var(--orange); }
+    /* REVENUE ROW */
+    .revenue-row { background: #0d0d0d; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 8px; }
+    .revenue-row-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .revenue-row-name { font-weight: 600; font-size: 14px; }
+    .revenue-row-amount { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold); }
+    .revenue-row-meta { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+    .revenue-row-actions { display: flex; gap: 6px; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <div class="header-logo-wrap">
+      <img src="03E5C7C0-AE90-4E83-B65E-ADA2E95AFD65.png" class="logo-img" alt="HoopNerdz Academy" />
+    </div>
+    <div class="header-action-bar" id="header-action"></div>
+  </div>
+  <div class="content" id="content"><div class="loading">Loading...</div></div>
+  <nav class="bottom-nav">
+    <button onclick="navigate('dashboard')" id="nav-dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button onclick="navigate('players')" id="nav-players">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+      Players
+    </button>
+    <button onclick="navigate('sessions')" id="nav-sessions">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+      Sessions
+    </button>
+    <button onclick="navigate('contacts')" id="nav-contacts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Contacts
+    </button>
+    <button onclick="navigate('schedule')" id="nav-schedule">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Schedule
+    </button>
+    <button onclick="navigate('calendar')" id="nav-calendar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="16" r="1" fill="currentColor"/><circle cx="12" cy="16" r="1" fill="currentColor"/><circle cx="16" cy="16" r="1" fill="currentColor"/></svg>
+      Calendar
+    </button>
+  </nav>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, doc, onSnapshot, setDoc, updateDoc, addDoc, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAHZ_7AYsGf8WU8g8OAxorA1zM0wsXeJiU",
+    authDomain: "hoopnerdz-academy.firebaseapp.com",
+    projectId: "hoopnerdz-academy",
+    storageBucket: "hoopnerdz-academy.firebasestorage.app",
+    messagingSenderId: "413802560597",
+    appId: "1:413802560597:web:56780e2995c82ca64468dc",
+    measurementId: "G-0LF4L01NXF"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const PACKAGES = [
+    { name: "1 Session", sessions: 1, price: 40 },
+    { name: "4 Sessions", sessions: 4, price: 140 },
+    { name: "6 Sessions", sessions: 6, price: 200 },
+  ];
+  const DAY_HOURS = ["9:00–10:00AM","10:00–11:00AM","11:00AM–12:00PM"];
+  const LATE_HOURS = ["5:00–6:00PM","6:00–7:00PM","7:00–8:00PM"];
+  const DAY_DAYS = ["Mon","Tue","Wed","Thu"];
+  const LATE_DAYS = ["Tue","Wed","Thu"];
+  const MAX_PER_SLOT = 8;
+  const LEVELS = ["Beginner","Intermediate","Advanced"];
+  const LEVEL_COLORS = { Beginner:"var(--green)", Intermediate:"var(--blue)", Advanced:"var(--red)" };
+
+  let players = [], sessions = [], settings = { allPaused: false, closedSlots: [] };
+  let currentTab = "dashboard", selectedPlayerId = null;
+
+  function fmtDate(d) {
+    if (!d) return "";
+    const date = d.toDate ? d.toDate() : new Date(d);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  function slotCount(key) { return sessions.filter(s => s.slotKey === key).length; }
+  function isSlotClosed(key) { return (settings.closedSlots || []).includes(key); }
+  function slotStatus(key) {
+    if (settings.allPaused) return "paused";
+    if (isSlotClosed(key)) return "closed";
+    const count = slotCount(key);
+    if (count >= MAX_PER_SLOT) return "full";
+    if (count >= MAX_PER_SLOT - 2) return "warn";
+    return "open";
+  }
+
+  onSnapshot(collection(db, "players"), snap => { players = snap.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
+  onSnapshot(collection(db, "sessions"), snap => { sessions = snap.docs.map(d => ({ id: d.id, ...d.data() })); render(); });
+  onSnapshot(doc(db, "settings", "main"), snap => { if (snap.exists()) settings = snap.data(); render(); });
+
+  async function toggleAllPaused() { await setDoc(doc(db, "settings", "main"), { ...settings, allPaused: !settings.allPaused }); }
+  async function toggleSlot(key) {
+    const closed = settings.closedSlots || [];
+    const updated = closed.includes(key) ? closed.filter(k => k !== key) : [...closed, key];
+    await setDoc(doc(db, "settings", "main"), { ...settings, closedSlots: updated });
+  }
+  async function saveNotes(id, notes) { await updateDoc(doc(db, "players", id), { notes }); }
+  async function addPlayer(data) { await addDoc(collection(db, "players"), data); }
+  async function logSession(data) {
+    const player = players.find(p => p.id === data.playerId);
+    if (!player || player.sessionsRemaining <= 0) return;
+    if (slotCount(data.slotKey) >= MAX_PER_SLOT) { alert("That slot is full."); return; }
+    await addDoc(collection(db, "sessions"), data);
+    await updateDoc(doc(db, "players", data.playerId), {
+      sessionsRemaining: (player.sessionsRemaining || 0) - 1,
+      sessionsAttended: (player.sessionsAttended || 0) + 1,
+    });
+  }
+
+  function navigate(tab, playerId = null) {
+    currentTab = tab; selectedPlayerId = playerId;
+    document.querySelectorAll(".bottom-nav button").forEach(b => b.classList.remove("active"));
+    document.getElementById("nav-" + tab)?.classList.add("active");
+    render();
+  }
+  window.navigate = navigate;
+
+  function render() {
+    const content = document.getElementById("content");
+    const headerAction = document.getElementById("header-action");
+    headerAction.innerHTML = "";
+    if (currentTab === "dashboard") renderDashboard(content);
+    else if (currentTab === "players" && selectedPlayerId) renderPlayerDetail(content, selectedPlayerId);
+    else if (currentTab === "players") renderPlayers(content, headerAction);
+    else if (currentTab === "sessions") renderSessions(content, headerAction);
+    else if (currentTab === "contacts") renderContacts(content);
+    else if (currentTab === "schedule") renderSchedule(content);
+    else if (currentTab === "calendar") renderCalendar(content);
+  }
+
+  window._openPendingDetail = () => {
+    const pending = players.filter(p => p.status === "pending_payment");
+    showModal(`
+      <div class="modal-title">💰 Pending Payments (${pending.length})</div>
+      ${pending.length === 0 ? `<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No pending payments.</div>` : ""}
+      ${pending.map(p => {
+        const pkg = PACKAGES[p.package]||PACKAGES[0];
+        return `<div class="revenue-row">
+          <div class="revenue-row-top">
+            <div class="revenue-row-name">${p.name||""}</div>
+            <div class="revenue-row-amount">$${pkg.price}</div>
+          </div>
+          <div class="revenue-row-meta">
+            ${pkg.name} · <span class="badge badge-${(p.level||"beginner").toLowerCase()}">${p.level||""}</span>
+            · ${p.parentPhone||""} · ${fmtDate(p.joinDate)}
+          </div>
+          <div class="revenue-row-actions">
+            <button class="btn btn-gold btn-sm" onclick="window._confirmPayment('${p.id}');window.closeModal()">✓ Confirm Payment</button>
+            <button class="btn btn-sm" style="background:#2a0000;color:var(--red);border:1px solid var(--red)" onclick="window.closeModal();window._cancelPlayer('${p.id}')">🚫 Cancel</button>
+            <button class="btn btn-sm btn-outline" onclick="window.closeModal();navigate('players','${p.id}')">View →</button>
+          </div>
+        </div>`;
+      }).join("")}
+      <div style="margin-top:16px"><button class="btn btn-outline" style="width:100%" onclick="window.closeModal()">Close</button></div>
+    `);
+  };
+
+  // ── REVENUE MODAL ─────────────────────────────────────────────
+  window._openRevenueDetail = () => {
+    const paidPlayers = players.filter(p =>
+      p.status !== "cancelled" && p.status !== "refunded" && p.status !== "pending_payment" && p.status !== "scholarship_pending"
+    ).sort((a,b) => new Date(b.joinDate||0) - new Date(a.joinDate||0));
+
+    const refundedPlayers = players.filter(p => p.status === "refunded");
+    const gross = paidPlayers.reduce((s,p) => s + Number(p.amountPaid ?? PACKAGES[p.package]?.price ?? 0), 0);
+    const refundedTotal = refundedPlayers.reduce((s,p) => s + Number(p.refundAmount||0), 0);
+    const totalRevenue = Math.max(0, gross - refundedTotal);
+
+    showModal(`
+      <div class="modal-title">💰 Revenue Detail</div>
+      <div style="background:#1a1600;border:1px solid var(--gold);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:12px;color:var(--muted)">Total Collected</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold)">$${totalRevenue.toLocaleString()}</div>
+      </div>
+
+      ${paidPlayers.length === 0 ? `<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">No paid players yet.</div>` : ""}
+
+      ${paidPlayers.map(p => {
+        const pkg = PACKAGES[p.package] || PACKAGES[0];
+        const paid = p.amountPaid !== undefined ? p.amountPaid : pkg.price;
+        const discount = pkg.price - paid;
+        return `<div class="revenue-row">
+          <div class="revenue-row-top">
+            <div class="revenue-row-name">${p.name||""}</div>
+            <div class="revenue-row-amount">$${paid}</div>
+          </div>
+          <div class="revenue-row-meta">
+            ${pkg.name} · <span class="badge badge-${(p.level||"beginner").toLowerCase()}">${p.level||""}</span>
+            ${discount > 0 ? ` · <span style="color:var(--green);font-size:10px">-$${discount} discount</span>` : ""}
+            ${p.promoCode ? ` · <span style="color:var(--gold);font-size:10px">🏷️ ${p.promoCode}</span>` : ""}
+            · ${fmtDate(p.joinDate)}
+          </div>
+          <div class="revenue-row-actions">
+            <button class="btn btn-sm" style="background:#1a2a3a;color:var(--blue);border:1px solid var(--blue)" onclick="window.closeModal();window._openRefund('${p.id}')">💸 Refund</button>
+            <button class="btn btn-sm" style="background:#2a0000;color:var(--red);border:1px solid var(--red)" onclick="window.closeModal();window._cancelPlayer('${p.id}')">🚫 Cancel</button>
+            <button class="btn btn-sm btn-outline" onclick="window.closeModal();navigate('players','${p.id}')">View →</button>
+          </div>
+        </div>`;
+      }).join("")}
+
+      ${refundedPlayers.length > 0 ? `
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--orange);letter-spacing:1px;margin:16px 0 8px">REFUNDED</div>
+        ${refundedPlayers.map(p => {
+          const pkg = PACKAGES[p.package]||PACKAGES[0];
+          return `<div class="revenue-row" style="border-color:#3a2000">
+            <div class="revenue-row-top">
+              <div class="revenue-row-name" style="color:var(--muted)">${p.name||""}</div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--orange)">-$${p.refundAmount||0}</div>
+            </div>
+            <div class="revenue-row-meta">${pkg.name} · ${p.refundReason && p.refundReason !== "Time" ? p.refundReason : "Refunded"} · ${fmtDate(p.refundDate||p.joinDate)}</div>
+            <div class="revenue-row-actions">
+              <button class="btn btn-sm" style="background:#0a2a15;color:var(--green);border:1px solid var(--green)" onclick="window.closeModal();window._reactivatePlayer('${p.id}')">♻️ Reactivate</button>
+            </div>
+          </div>`;
+        }).join("")}
+      ` : ""}
+
+      <div style="margin-top:16px">
+        <button class="btn btn-outline" style="width:100%" onclick="window.closeModal()">Close</button>
+      </div>
+    `);
+  };
+
+  function renderDashboard(el) {
+    const confirmedPlayers = players.filter(p => p.status !== "cancelled" && p.status !== "refunded" && p.status !== "pending_payment");
+    const refundedAmount = players.filter(p => p.status === "refunded").reduce((s, p) => s + Number(p.refundAmount || 0), 0);
+    const grossRevenue = confirmedPlayers.reduce((s, p) => s + Number(p.amountPaid ?? PACKAGES[p.package]?.price ?? 0), 0);
+    const totalRevenue = Math.max(0, grossRevenue - refundedAmount);
+    const activePlayers = players.filter(p => p.status !== "cancelled" && p.status !== "refunded");
+    const pkgBreak = PACKAGES.map((pkg, i) => ({ ...pkg, count: confirmedPlayers.filter(p => p.package === i).length }));
+    const lvlBreak = LEVELS.map(lvl => ({ lvl, count: activePlayers.filter(p => p.level === lvl).length }));
+    const needRenew = activePlayers.filter(p => p.sessionsRemaining === 0);
+    const pending = players.filter(p => p.status === "pending_payment");
+    const scholarships = players.filter(p => p.status === "scholarship_pending");
+    const recentSessions = [...sessions].sort((a,b) => (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)).slice(0,5);
+
+    el.innerHTML = `
+      ${settings.allPaused ? `<div class="alert-banner alert-red">🚫 <b>ALL SESSIONS PAUSED</b></div>` : ""}
+      ${pending.length > 0 ? `<div class="alert-banner alert-orange tappable" onclick="window._openPendingDetail()">💰 <b>${pending.length} new registration${pending.length>1?"s":""}</b> — pending payment! Tap to review →</div>` : ""}
+      ${scholarships.length > 0 ? `<div class="alert-banner" style="background:#0d1520;border:1px solid var(--blue);color:var(--blue)">🎓 <b>${scholarships.length} LYM Scholarship request${scholarships.length>1?"s":""}</b> — needs your review!</div>` : ""}
+      ${needRenew.length > 0 ? `<div class="alert-banner alert-orange">🔔 <b>${needRenew.length} player${needRenew.length>1?"s":""} out of sessions</b></div>` : ""}
+      <div class="stat-grid">
+        <div class="stat-card tappable" onclick="window._openRevenueDetail()">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value gold">$${totalRevenue.toLocaleString()}</div>
+          <div class="stat-tap-hint">Tap to view orders →</div>
+        </div>
+        <div class="stat-card"><div class="stat-label">Active Players</div><div class="stat-value blue">${activePlayers.length}</div></div>
+        <div class="stat-card"><div class="stat-label">Sessions Logged</div><div class="stat-value green">${sessions.length}</div></div>
+        <div class="stat-card"><div class="stat-label">Contacts</div><div class="stat-value red">${players.filter(p=>p.parentEmail||p.parentPhone).length}</div></div>
+      </div>
+      <div class="section-hd"><div class="section-title">Packages Sold</div></div>
+      <div class="pkg-grid">
+        ${pkgBreak.map(pkg=>`<div class="pkg-card"><div class="pkg-name">${pkg.name}</div><div class="pkg-price">$${pkg.price}</div><div class="pkg-count"><b>${pkg.count}</b> sold</div></div>`).join("")}
+      </div>
+      <div class="section-hd"><div class="section-title">Skill Levels</div></div>
+      <div class="level-row">
+        ${lvlBreak.map(({lvl,count})=>`<div class="level-chip"><div class="level-chip-count" style="color:${LEVEL_COLORS[lvl]}">${count}</div><div class="level-chip-label">${lvl}</div></div>`).join("")}
+      </div>
+      <div class="section-hd"><div class="section-title">Recent Sessions</div></div>
+      <div class="session-list">
+        ${recentSessions.length===0?`<div class="empty"><div class="empty-icon">🏀</div>No sessions yet</div>`:
+          recentSessions.map(s=>`<div class="session-item">
+            <div><div class="session-name">${s.playerName||""}</div><div class="session-meta">${s.slotKey?s.slotKey.replace(/\|/g," · "):s.type||""}${s.notes?" · "+s.notes:""}</div></div>
+            <div class="session-date">${fmtDate(s.createdAt||s.date)}</div>
+          </div>`).join("")}
+      </div>`;
+  }
+
+  function renderPlayers(el, headerAction) {
+    const activePlayers = players.filter(p => p.status !== "cancelled" && p.status !== "refunded");
+    const alumniPlayers = players.filter(p => p.status === "cancelled" || p.status === "refunded")
+      .sort((a,b) => new Date(b.cancelDate||b.refundDate||b.joinDate||0) - new Date(a.cancelDate||a.refundDate||a.joinDate||0));
+
+    headerAction.innerHTML = `<div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm" onclick="window._openLogSession()">+ Session</button>
+      <button class="btn btn-gold btn-sm" onclick="window._openAddPlayer()">+ Player</button>
+    </div>`;
+
+    function activeHTML(p) {
+      const pkg=PACKAGES[p.package]||PACKAGES[0];
+      const bonus = p.bonusSessions || 0;
+      const totalRemaining = (p.sessionsRemaining ?? pkg.sessions) + bonus;
+      const pips=Array.from({length:pkg.sessions},(_,i)=>`<div class="pip ${i<(p.sessionsAttended||0)?"pip-used":"pip-rem"}"></div>`).join("");
+      return `<div class="player-card" onclick="navigate('players','${p.id}')">
+        <div style="display:flex;align-items:center;gap:10px;flex:1">
+          ${p.photoUrl
+            ? `<img src="${p.photoUrl}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:1.5px solid var(--gold);flex-shrink:0" />`
+            : `<div style="width:44px;height:44px;border-radius:50%;background:#1a1a1a;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👤</div>`}
+          <div>
+            <div class="player-name">${p.name||""}${p.age?`<span style="color:var(--muted);font-weight:400;font-size:12px;margin-left:6px">Age ${p.age}</span>`:""}
+            ${p.status==="pending_payment"?`<span class="pending-badge" style="margin-left:6px">Pending</span>`:""}
+            ${bonus>0?`<span style="background:#1a1600;color:var(--gold);padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700;margin-left:6px">+${bonus} Bonus</span>`:""}
+            </div>
+            <div class="player-sub"><span class="badge badge-${(p.level||"beginner").toLowerCase()}">${p.level||"Beginner"}</span>
+            ${totalRemaining===0?`<span class="renew-badge">Needs Renewal</span>`:""}</div>
+            <div class="pip-bar">${pips}</div>
+          </div>
+        </div>
+        <div class="sessions-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <div class="sessions-remaining" style="color:${totalRemaining===0?"var(--red)":"var(--green)"}">${totalRemaining}</div>
+          <div style="font-size:11px;color:var(--muted)">left</div>
+          <button style="background:#1a1600;border:1px solid var(--gold);color:var(--gold);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif" onclick="event.stopPropagation();window._cycleBonus('${p.id}',${bonus})">${bonus===0?"+Bonus":bonus===1?"+2":"+0"}</button>
+        </div>
+      </div>`;
+    }
+
+    function alumniHTML(p) {
+      const pkg = PACKAGES[p.package]||PACKAGES[0];
+      const isRefunded = p.status === "refunded";
+      return `<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div>
+            <div style="font-weight:600;font-size:15px">${p.name||""} ${p.age?`<span style="color:var(--muted);font-size:12px;font-weight:400">Age ${p.age}</span>`:""}</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">
+              <span class="badge badge-${(p.level||"beginner").toLowerCase()}">${p.level||""}</span>
+              · ${pkg.name}
+              · <span style="color:${isRefunded?"var(--orange)":"var(--red)"}">${isRefunded?"💸 Refunded":"🚫 Cancelled"}</span>
+            </div>
+          </div>
+          <button class="btn btn-sm" style="background:#0a2a15;color:var(--green);border:1px solid var(--green);flex-shrink:0" onclick="window._reactivatePlayer('${p.id}')">♻️ Reactivate</button>
+        </div>
+        <div style="background:#0d0d0d;border-radius:8px;padding:10px;font-size:12px;display:flex;flex-direction:column;gap:4px">
+          ${p.parentName?`<div>👤 <b>${p.parentName}</b></div>`:""}
+          ${p.parentPhone?`<div>📞 <a href="tel:${p.parentPhone}" style="color:var(--green)">${p.parentPhone}</a></div>`:""}
+          ${p.parentEmail?`<div>✉️ <a href="mailto:${p.parentEmail}" style="color:var(--blue)">${p.parentEmail}</a></div>`:""}
+          <div style="color:var(--muted);margin-top:2px">Joined ${fmtDate(p.joinDate)}${isRefunded&&p.refundDate?` · Refunded ${fmtDate(p.refundDate)}`:!isRefunded&&p.cancelDate?` · Cancelled ${fmtDate(p.cancelDate)}`:""}</div>
+        </div>
+      </div>`;
+    }
+
+    el.innerHTML = `
+      <div class="player-list">
+        ${activePlayers.length===0
+          ? `<div class="empty"><div class="empty-icon">👟</div>No active players yet!</div>`
+          : activePlayers.map(activeHTML).join("")}
+      </div>
+      ${alumniPlayers.length > 0 ? `
+        <div style="margin-top:20px">
+          <div class="section-hd">
+            <div class="section-title">🎓 Alumni (${alumniPlayers.length})</div>
+            <div style="font-size:11px;color:var(--muted)">Contact info retained</div>
+          </div>
+          ${alumniPlayers.map(alumniHTML).join("")}
+        </div>` : ""}
+    `;
+  }
+
+  function renderPlayerDetail(el, playerId) {
+    const p = players.find(pl => pl.id === playerId);
+    if (!p) { navigate("players"); return; }
+    const pkg = PACKAGES[p.package]||PACKAGES[0];
+    const playerSessions = sessions.filter(s=>s.playerId===playerId).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    el.innerHTML = `
+      <button class="back-btn" onclick="navigate('players')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>All Players
+      </button>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+        ${p.photoUrl
+          ? `<img src="${p.photoUrl}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex-shrink:0" />`
+          : `<div style="width:64px;height:64px;border-radius:50%;background:#1a1a1a;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">👤</div>`}
+        <div class="detail-name" style="margin:0">${p.name||""}</div>
+      </div>
+      <div class="detail-meta">
+        ${p.age?`<span>Age ${p.age}</span>`:""}
+        <span class="badge badge-${(p.level||"beginner").toLowerCase()}">${p.level||"Beginner"}</span>
+        <span style="color:var(--gold)">${pkg.name} · $${p.amountPaid!==undefined?p.amountPaid:pkg.price}</span>
+        ${p.amountPaid!==undefined && p.amountPaid < pkg.price ? `<span style="background:#1a3a2a;color:var(--green);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">DISCOUNT -$${pkg.price - p.amountPaid}</span>` : ""}
+        ${p.promoCode?`<span style="background:#1a1600;color:var(--gold);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">🏷️ ${p.promoCode}</span>`:""}
+        ${p.isScholarship?`<span style="background:#0d1520;color:var(--blue);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">🎓 LYM SCHOLARSHIP</span>`:""}
+        ${p.sessionsRemaining===0?`<span class="renew-badge">Needs Renewal</span>`:""}
+        ${p.status==="pending_payment"?`<span class="pending-badge">Pending Payment</span>`:""}
+        ${p.status==="scholarship_pending"?`<span style="background:#0d1520;color:var(--blue);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">🎓 LYM Review Pending</span>`:""}
+      </div>
+      ${p.parentName?`<div style="background:#0d0d0d;border-radius:10px;padding:12px;margin-bottom:12px;font-size:13px">
+        👤 <b>${p.parentName}</b>${p.parentPhone?` · <a href="tel:${p.parentPhone}" style="color:var(--green)">${p.parentPhone}</a>`:""}
+        ${p.parentEmail?`<br>✉️ <a href="mailto:${p.parentEmail}" style="color:var(--blue)">${p.parentEmail}</a>`:""}
+      </div>`:""}
+      <div class="detail-grid">
+        <div class="detail-stat"><div class="detail-stat-val green">${p.sessionsAttended||0}</div><div class="detail-stat-lbl">Attended</div></div>
+        <div class="detail-stat"><div class="detail-stat-val ${p.sessionsRemaining===0?"red":"blue"}">${p.sessionsRemaining??pkg.sessions}</div><div class="detail-stat-lbl">Remaining</div></div>
+        <div class="detail-stat"><div class="detail-stat-val gold">${pkg.sessions}</div><div class="detail-stat-lbl">Purchased</div></div>
+      </div>
+      ${p.status==="pending_payment"?`<button class="btn btn-gold" style="width:100%;margin-bottom:8px" onclick="window._confirmPayment('${p.id}')">✓ Confirm Payment Received</button>`:""}
+      ${p.status==="scholarship_pending"?`<div style="background:#0d1520;border:1px solid var(--blue);border-radius:10px;padding:12px;margin-bottom:8px;font-size:13px;color:var(--blue)">🎓 <b>LeaveYourMark (LYM) Scholarship Application</b> — Awaiting review</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <button class="btn btn-gold" onclick="window._approveScholarship('${p.id}')">✓ LYM Approved</button>
+        <button class="btn btn-outline" onclick="window._denyScholarship('${p.id}')">✗ Deny</button>
+      </div>`:""}
+      ${p.status==="cancelled"?`<div style="background:#2a0000;border:1px solid var(--red);border-radius:10px;padding:12px;margin-bottom:12px;font-size:13px;color:#ff6666">🚫 Cancelled${p.cancelReason?" · "+p.cancelReason:""}</div>`:""}
+      ${p.status==="refunded"?`<div style="background:#1a1200;border:1px solid var(--orange);border-radius:10px;padding:12px;margin-bottom:12px;font-size:13px;color:var(--orange)">💸 Refunded $${p.refundAmount||""}${p.refundReason?" · "+p.refundReason:""}</div>`:""}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+        <button class="btn btn-outline btn-sm" onclick="window._openEditPlayer('${p.id}')">✏️ Edit Player</button>
+        ${p.status==="cancelled"||p.status==="refunded"
+          ? `<button class="btn btn-sm" style="background:#0a2a15;color:var(--green);border:1px solid var(--green)" onclick="window._reactivatePlayer('${p.id}')">♻️ Reactivate</button>`
+          : `<button class="btn btn-sm" style="background:#1a2a3a;color:var(--blue);border:1px solid var(--blue)" onclick="window._openRefund('${p.id}')">💸 Refund</button>`}
+        <button class="btn btn-sm" style="background:#2a1800;color:var(--orange);border:1px solid var(--orange)" onclick="window._openRenew('${p.id}')">🔄 Renew Package</button>
+        ${p.status!=="cancelled"&&p.status!=="refunded"
+          ? `<button class="btn btn-sm" style="background:#2a0000;color:var(--red);border:1px solid var(--red)" onclick="window._cancelPlayer('${p.id}')">🚫 Cancel</button>`
+          : ""}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Coaching Notes</label>
+        <textarea class="form-input" id="notes-${p.id}" placeholder="Ball handling, attitude, areas to improve...">${p.notes||""}</textarea>
+        <button class="btn btn-outline btn-sm" style="margin-top:8px;width:100%" onclick="window._saveNotes('${p.id}')">Save Notes</button>
+      </div>
+      ${playerSessions.length>0?`
+        <hr class="divider">
+        <div class="section-hd"><div class="section-title">Session History (${playerSessions.length})</div></div>
+        <div class="session-list">
+          ${playerSessions.map(s=>`<div class="session-item">
+            <div><div class="session-name">${s.slotKey?s.slotKey.replace(/\|/g," · "):s.type||""}</div>${s.notes?`<div class="session-meta">${s.notes}</div>`:""}</div>
+            <div class="session-date">${fmtDate(s.createdAt||s.date)}</div>
+          </div>`).join("")}
+        </div>`:""}`;
+  }
+
+  function renderSessions(el, headerAction) {
+    headerAction.innerHTML = `<button class="btn btn-gold btn-sm" onclick="window._openLogSession()">+ Log Session</button>`;
+    const all = [...sessions].sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    el.innerHTML = `<div class="session-list">
+      ${all.length===0?`<div class="empty"><div class="empty-icon">📋</div>No sessions logged yet.</div>`:
+        all.map(s=>`<div class="session-item">
+          <div><div class="session-name">${s.playerName||""}</div><div class="session-meta">${s.slotKey?s.slotKey.replace(/\|/g," · "):s.type||""}${s.notes?" · "+s.notes:""}</div></div>
+          <div class="session-date">${fmtDate(s.createdAt||s.date)}</div>
+        </div>`).join("")}
+    </div>`;
+  }
+
+  function renderContacts(el) {
+    const withContact = players.filter(p => p.parentPhone || p.parentEmail);
+    el.innerHTML = `
+      <div class="section-hd"><div class="section-title">Contact List (${withContact.length})</div></div>
+      ${withContact.length===0?`<div class="empty"><div class="empty-icon">📇</div>No contacts yet.</div>`:""}
+      ${withContact.map(p=>`<div class="contact-card">
+        <div class="contact-name">${p.name||""} <span class="badge badge-${(p.level||"beginner").toLowerCase()}" style="margin-left:4px">${p.level||""}</span></div>
+        <div class="contact-parent">Parent: ${p.parentName||"—"}</div>
+        <div class="contact-links">
+          ${p.parentPhone?`<a href="tel:${p.parentPhone}" class="contact-link contact-phone">📞 ${p.parentPhone}</a>`:""}
+          ${p.parentEmail?`<a href="mailto:${p.parentEmail}" class="contact-link contact-email">✉️ ${p.parentEmail}</a>`:""}
+          <span class="contact-link contact-badge">${PACKAGES[p.package]?.name||""}</span>
+        </div>
+      </div>`).join("")}`;
+  }
+
+  function renderSchedule(el) {
+    document.getElementById("header-action").innerHTML = `<button class="btn btn-outline btn-sm" onclick="window._openPromoManager()">🏷️ Promos</button>`;
+    function slotBtn(key) {
+      const status = slotStatus(key);
+      const count = slotCount(key);
+      const avail = MAX_PER_SLOT - count;
+      const labels = { open:`${avail} open`, warn:`${avail} left`, full:"FULL", closed:"CLOSED 🔒", paused:"PAUSED" };
+      const cls = `slot-${status}`;
+      const clickable = status !== "paused";
+      return `<button class="slot-cell ${cls}" ${clickable?`onclick="window._showSlotRoster('${key}')"`:"disabled"}>${labels[status]||""}</button>`;
+    }
+    el.innerHTML = `
+      <div class="master-toggle">
+        <div>
+          <div class="master-toggle-label" style="color:${settings.allPaused?"var(--red)":"var(--green)"}">${settings.allPaused?"🚫 ALL PAUSED":"✅ SESSIONS OPEN"}</div>
+          <div class="master-toggle-sub">${settings.allPaused?"Tap to reopen":"Tap to pause all"}</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" ${settings.allPaused?"":"checked"} onchange="window._toggleAllPaused()" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      ${settings.allPaused?"":` 
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Tap any slot to see roster & open/close it.</div>
+        <div class="section-hd"><div class="section-title">Day Sessions</div></div>
+        <div class="schedule-wrap"><table class="schedule-table">
+          <thead><tr><th>Hour</th>${DAY_DAYS.map(d=>`<th>${d}</th>`).join("")}</tr></thead>
+          <tbody>${DAY_HOURS.map(h=>`<tr><td style="color:var(--muted);font-size:10px;text-align:left">${h}</td>${DAY_DAYS.map(d=>`<td>${slotBtn("Day|"+d+"|"+h)}</td>`).join("")}</tr>`).join("")}</tbody>
+        </table></div>
+        <div class="section-hd"><div class="section-title">Late Sessions</div></div>
+        <div class="schedule-wrap"><table class="schedule-table">
+          <thead><tr><th>Hour</th>${LATE_DAYS.map(d=>`<th>${d}</th>`).join("")}</tr></thead>
+          <tbody>${LATE_HOURS.map(h=>`<tr><td style="color:var(--muted);font-size:10px;text-align:left">${h}</td>${LATE_DAYS.map(d=>`<td>${slotBtn("Late|"+d+"|"+h)}</td>`).join("")}</tr>`).join("")}</tbody>
+        </table></div>
+        <div style="display:flex;gap:10px;margin-top:8px;font-size:11px;color:var(--muted);flex-wrap:wrap">
+          <span><span style="color:var(--green)">●</span> Open</span>
+          <span><span style="color:var(--orange)">●</span> Almost Full</span>
+          <span><span style="color:var(--muted)">●</span> Full</span>
+          <span><span style="color:var(--red)">●</span> Closed</span>
+        </div>`}`;
+  }
+
+  function renderCalendar(el) {
+    const today = new Date();
+    const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    const fullDayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    const startDate = new Date(today);
+    const dayOfWeek = today.getDay();
+    const diffToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    startDate.setDate(today.getDate() + diffToMon);
+    const ALL_SLOTS = [];
+    DAY_DAYS.forEach(day => DAY_HOURS.forEach(hour => ALL_SLOTS.push({ type:"Day", day, hour })));
+    LATE_DAYS.forEach(day => LATE_HOURS.forEach(hour => ALL_SLOTS.push({ type:"Late", day, hour })));
+    const days = Array.from({length:14}, (_, i) => { const d = new Date(startDate); d.setDate(startDate.getDate() + i); return d; });
+    function getDayPlayers(date) {
+      const dayName = dayNames[date.getDay()];
+      const keys = ALL_SLOTS.filter(s => s.day === dayName).map(s => `${s.type}|${s.day}|${s.hour}`);
+      return players.filter(p => keys.includes(p.preferredSlot) && p.status !== "cancelled" && p.status !== "refunded");
+    }
+    const selectedDayStr = window._selectedCalDay || today.toDateString();
+    const selectedDate = new Date(selectedDayStr);
+    const selectedDayName = dayNames[selectedDate.getDay()];
+    const selectedDaySlots = ALL_SLOTS.filter(s => s.day === selectedDayName);
+    el.innerHTML = `
+      <div class="section-hd"><div class="section-title">📅 Weekly Roster</div></div>
+      <div class="cal-week">
+        ${days.slice(0,7).map(d => {
+          const isToday = d.toDateString() === today.toDateString();
+          const isSelected = d.toDateString() === selectedDayStr;
+          const dp = getDayPlayers(d);
+          return `<div class="cal-day ${isToday?"today":""} ${dp.length>0?"has-sessions":""}" style="${isSelected?"border-color:var(--gold);background:#1a1600":""}" onclick="window._selectCalDay('${d.toDateString()}')">
+            <div class="cal-day-name">${dayNames[d.getDay()]}</div>
+            <div class="cal-day-num" style="color:${isToday?"var(--gold)":"var(--white)"}">${d.getDate()}</div>
+            ${dp.length>0?`<div class="cal-day-dot"></div>`:`<div style="height:8px"></div>`}
+          </div>`;
+        }).join("")}
+      </div>
+      <div class="cal-week">
+        ${days.slice(7,14).map(d => {
+          const isToday = d.toDateString() === today.toDateString();
+          const isSelected = d.toDateString() === selectedDayStr;
+          const dp = getDayPlayers(d);
+          return `<div class="cal-day ${isToday?"today":""} ${dp.length>0?"has-sessions":""}" style="${isSelected?"border-color:var(--gold);background:#1a1600":""}" onclick="window._selectCalDay('${d.toDateString()}')">
+            <div class="cal-day-name">${dayNames[d.getDay()]}</div>
+            <div class="cal-day-num" style="color:${isToday?"var(--gold)":"var(--white)"}">${d.getDate()}</div>
+            ${dp.length>0?`<div class="cal-day-dot"></div>`:`<div style="height:8px"></div>`}
+          </div>`;
+        }).join("")}
+      </div>
+      <div class="section-hd"><div class="section-title">${fullDayNames[selectedDate.getDay()]}, ${selectedDate.toLocaleDateString("en-US",{month:"short",day:"numeric"})}</div></div>
+      ${selectedDaySlots.length === 0 ? `<div class="empty"><div class="empty-icon">😴</div>No sessions this day.</div>` :
+        selectedDaySlots.map(slot => {
+          const key = `${slot.type}|${slot.day}|${slot.hour}`;
+          const slotPlayers = players.filter(p => p.preferredSlot === key && p.status !== "cancelled" && p.status !== "refunded");
+          const status = slotStatus(key);
+          return `<div class="cal-slot">
+            <div class="cal-slot-time">${slot.hour} · ${slot.type} Session
+              <span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;margin-left:8px;background:${status==="closed"?"#2a0000":"#0a2a15"};color:${status==="closed"?"var(--red)":"var(--green)"}">${slotPlayers.length}/${MAX_PER_SLOT}</span>
+            </div>
+            ${slotPlayers.length === 0 ? `<div class="cal-empty">No players registered</div>` :
+              slotPlayers.map(p => {
+                const pkg = PACKAGES[p.package]||PACKAGES[0];
+                return `<div class="cal-slot-player">
+                  <div><span style="font-weight:600">${p.name||""}</span><span class="badge badge-${(p.level||"beginner").toLowerCase()}" style="margin-left:6px">${p.level||""}</span></div>
+                  <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:${(p.sessionsRemaining||0)===0?"var(--red)":"var(--green)"}">${p.sessionsRemaining??0} left</span>
+                </div>`;
+              }).join("")}
+          </div>`;
+        }).join("")}`;
+  }
+
+  window._selectCalDay = (dateStr) => { window._selectedCalDay = dateStr; renderCalendar(document.getElementById("content")); };
+
+  window._showSlotRoster = (key) => {
+    const parts = key.split("|");
+    const type = parts[0], day = parts[1], hour = parts[2];
+    const isClosed = (settings.closedSlots||[]).includes(key);
+    const count = slotCount(key);
+    const avail = MAX_PER_SLOT - count;
+    const registeredPlayers = players.filter(p => p.preferredSlot === key && p.status !== "cancelled" && p.status !== "refunded");
+    const slotSessions = [...sessions].filter(s => s.slotKey === key).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    showModal(`
+      <div class="modal-title">${type} · ${day} · ${hour}</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <span style="background:#0a2a15;color:var(--green);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600">${count}/${MAX_PER_SLOT} booked</span>
+        <span style="background:#1a1600;color:var(--gold);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600">${avail} spots left</span>
+        <span style="background:${isClosed?"#2a0000":"#0a2a15"};color:${isClosed?"var(--red)":"var(--green)"};padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600">${isClosed?"🔒 Closed":"✅ Open"}</span>
+      </div>
+      <div style="margin-bottom:16px">
+        <button class="btn btn-sm ${isClosed?"btn-gold":"btn-outline"}" onclick="window._toggleSlot('${key}');window.closeModal()">${isClosed?"🔓 Open Slot":"🔒 Close Slot"}</button>
+      </div>
+      ${registeredPlayers.length > 0 ? `
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);letter-spacing:1px;margin-bottom:8px">📋 REGISTERED (${registeredPlayers.length})</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+          ${registeredPlayers.map(p => {
+            const pkg = PACKAGES[p.package]||PACKAGES[0];
+            return `<div style="background:#0d0d0d;border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+              <div><div style="font-weight:600;font-size:14px">${p.name||""}</div><div style="font-size:11px;color:var(--muted)">${p.level||""} · ${pkg.name} · ${p.sessionsRemaining??0} left</div></div>
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${(p.sessionsRemaining||0)===0?"var(--red)":"var(--green)"}">${p.sessionsRemaining??0}</span>
+            </div>`;
+          }).join("")}
+        </div>` : `<div style="color:var(--muted);font-size:13px;margin-bottom:16px">No players registered yet.</div>`}
+      ${slotSessions.length > 0 ? `
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);letter-spacing:1px;margin-bottom:8px">✅ HISTORY (${slotSessions.length})</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${slotSessions.slice(0,10).map(s => `<div style="background:#0d0d0d;border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:600;font-size:14px">${s.playerName||""}</div>
+            <div style="font-size:12px;color:var(--muted)">${fmtDate(s.createdAt||s.date)}</div>
+          </div>`).join("")}
+        </div>` : ""}
+      <div style="margin-top:16px"><button class="btn btn-outline" style="width:100%" onclick="window.closeModal()">Close</button></div>
+    `);
+  };
+
+  window._toggleAllPaused = toggleAllPaused;
+  window._toggleSlot = toggleSlot;
+  window._saveNotes = async (id) => {
+    const val = document.getElementById("notes-"+id)?.value||"";
+    await saveNotes(id, val);
+    const btn = document.querySelector(`[onclick="window._saveNotes('${id}')"]`);
+    if (btn) { btn.textContent="Saved ✓"; setTimeout(()=>btn.textContent="Save Notes",1500); }
+  };
+  window._confirmPayment = async (id) => { await updateDoc(doc(db, "players", id), { status: "confirmed" }); };
+  window._approveScholarship = async (id) => { await updateDoc(doc(db, "players", id), { status: "confirmed", amountPaid: 0 }); };
+  window._denyScholarship = async (id) => {
+    const reason = prompt("Reason for denial? (optional)"); if (reason === null) return;
+    await updateDoc(doc(db, "players", id), { status: "cancelled", cancelReason: reason || "Scholarship denied", preferredSlot: "" });
+  };
+  window._cancelPlayer = async (id) => {
+    const reason = prompt("Reason for cancellation? (optional)"); if (reason === null) return;
+    await updateDoc(doc(db, "players", id), { status: "cancelled", cancelReason: reason || "", cancelDate: new Date().toISOString(), preferredSlot: "" });
+  };
+  window._openRefund = (id) => {
+    const p = players.find(pl => pl.id === id);
+    const pkg = PACKAGES[p?.package] || PACKAGES[0];
+    showModal(`
+      <div class="modal-title">Issue Refund</div>
+      <div class="form-group"><label class="form-label">Refund Amount ($)</label><input class="form-input" id="r-amount" type="number" value="${p?.amountPaid??pkg.price}" /></div>
+      <div class="form-group"><label class="form-label">Reason</label><input class="form-input" id="r-reason" placeholder="e.g. Schedule conflict, injury..." /></div>
+      <div class="modal-actions">
+        <button class="btn btn-gold" style="flex:1" onclick="window._submitRefund('${id}')">Issue Refund</button>
+        <button class="btn btn-outline" onclick="window.closeModal()">Cancel</button>
+      </div>`);
+  };
+  window._submitRefund = async (id) => {
+    const amount = document.getElementById("r-amount")?.value;
+    const reason = document.getElementById("r-reason")?.value || "";
+    await updateDoc(doc(db, "players", id), { status: "refunded", refundAmount: amount, refundReason: reason, refundDate: new Date().toISOString(), preferredSlot: "" });
+    window.closeModal();
+  };
+  window._reactivatePlayer = async (id) => { await updateDoc(doc(db, "players", id), { status: "confirmed", cancelReason: "", refundAmount: "", refundReason: "" }); };
+  window._openRenew = (id) => {
+    showModal(`
+      <div class="modal-title">Renew Package</div>
+      <div class="form-group"><label class="form-label">New Package</label>
+        <select class="form-input" id="rn-pkg">${PACKAGES.map((pkg,i)=>`<option value="${i}">${pkg.name} — $${pkg.price}</option>`).join("")}</select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-gold" style="flex:1" onclick="window._submitRenew('${id}')">Renew</button>
+        <button class="btn btn-outline" onclick="window.closeModal()">Cancel</button>
+      </div>`);
+  };
+  window._submitRenew = async (id) => {
+    const pkgIdx = Number(document.getElementById("rn-pkg")?.value || 0);
+    const pkg = PACKAGES[pkgIdx];
+    await updateDoc(doc(db, "players", id), { package: pkgIdx, sessionsRemaining: pkg.sessions, status: "pending_payment" });
+    window.closeModal();
+  };
+  window._openEditPlayer = (id) => {
+    const p = players.find(pl => pl.id === id); if (!p) return;
+    showModal(`
+      <div class="modal-title">Edit Player</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="e-name" value="${p.name||""}" /></div>
+        <div class="form-group"><label class="form-label">Age</label><input class="form-input" id="e-age" type="number" value="${p.age||""}" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Level</label><select class="form-input" id="e-level">${LEVELS.map(l=>`<option ${p.level===l?"selected":""}>${l}</option>`).join("")}</select></div>
+        <div class="form-group"><label class="form-label">Package</label><select class="form-input" id="e-pkg">${PACKAGES.map((pkg,i)=>`<option value="${i}" ${p.package===i?"selected":""}>${pkg.name} — $${pkg.price}</option>`).join("")}</select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Sessions Remaining</label><input class="form-input" id="e-remaining" type="number" value="${p.sessionsRemaining??0}" min="0" /></div>
+        <div class="form-group"><label class="form-label">Sessions Attended</label><input class="form-input" id="e-attended" type="number" value="${p.sessionsAttended||0}" min="0" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Parent Name</label><input class="form-input" id="e-parent" value="${p.parentName||""}" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Parent Phone</label><input class="form-input" id="e-phone" value="${p.parentPhone||""}" /></div>
+        <div class="form-group"><label class="form-label">Parent Email</label><input class="form-input" id="e-email" value="${p.parentEmail||""}" /></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-gold" style="flex:1" onclick="window._submitEditPlayer('${id}')">Save Changes</button>
+        <button class="btn btn-outline" onclick="window.closeModal()">Cancel</button>
+      </div>`);
+  };
+  window._submitEditPlayer = async (id) => {
+    await updateDoc(doc(db, "players", id), {
+      name: document.getElementById("e-name")?.value||"", age: document.getElementById("e-age")?.value||"",
+      level: document.getElementById("e-level")?.value||"Beginner", package: Number(document.getElementById("e-pkg")?.value||0),
+      sessionsRemaining: Number(document.getElementById("e-remaining")?.value||0), sessionsAttended: Number(document.getElementById("e-attended")?.value||0),
+      parentName: document.getElementById("e-parent")?.value||"", parentPhone: document.getElementById("e-phone")?.value||"",
+      parentEmail: document.getElementById("e-email")?.value||"",
+    });
+    window.closeModal();
+  };
+  window._openAddPlayer = () => {
+    showModal(`
+      <div class="modal-title">Add New Player</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Name *</label><input class="form-input" id="m-name" placeholder="Full name" /></div>
+        <div class="form-group"><label class="form-label">Age</label><input class="form-input" id="m-age" type="number" placeholder="Age" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Skill Level</label><select class="form-input" id="m-level">${LEVELS.map(l=>`<option>${l}</option>`).join("")}</select></div>
+        <div class="form-group"><label class="form-label">Package</label><select class="form-input" id="m-pkg">${PACKAGES.map((pkg,i)=>`<option value="${i}">${pkg.name} — $${pkg.price}</option>`).join("")}</select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="m-notes" placeholder="Goals, parent contact..." /></div>
+      <div class="modal-actions">
+        <button class="btn btn-gold" style="flex:1" onclick="window._submitAddPlayer()">Add Player</button>
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      </div>`);
+    setTimeout(()=>document.getElementById("m-name")?.focus(),100);
+  };
+  window._submitAddPlayer = async () => {
+    const name = document.getElementById("m-name")?.value.trim(); if (!name) return;
+    const pkgIdx = Number(document.getElementById("m-pkg")?.value||0);
+    const pkg = PACKAGES[pkgIdx];
+    await addPlayer({ name, age:document.getElementById("m-age")?.value||"", level:document.getElementById("m-level")?.value||"Beginner", package:pkgIdx, sessionsRemaining:pkg.sessions, sessionsAttended:0, notes:document.getElementById("m-notes")?.value||"", joinDate:new Date().toISOString(), status:"confirmed" });
+    closeModal(); navigate("players");
+  };
+  window._openLogSession = () => {
+    const available = players.filter(p=>(p.sessionsRemaining||0)>0);
+    const today = new Date().toISOString().split("T")[0];
+    const openSlots = [];
+    DAY_DAYS.forEach(day=>DAY_HOURS.forEach(hour=>{ const key=`Day|${day}|${hour}`,s=slotStatus(key); if(s==="open"||s==="warn") openSlots.push({key,label:`Day · ${day} · ${hour}`,avail:MAX_PER_SLOT-slotCount(key),status:s}); }));
+    LATE_DAYS.forEach(day=>LATE_HOURS.forEach(hour=>{ const key=`Late|${day}|${hour}`,s=slotStatus(key); if(s==="open"||s==="warn") openSlots.push({key,label:`Late · ${day} · ${hour}`,avail:MAX_PER_SLOT-slotCount(key),status:s}); }));
+    showModal(`
+      <div class="modal-title">Log Session</div>
+      <div class="form-group"><label class="form-label">Player *</label>
+        <select class="form-input" id="m-player" onchange="window._updateSlotHighlight(this.value)">
+          <option value="">Select player...</option>
+          ${available.map(p=>`<option value="${p.id}">${p.name} (${p.sessionsRemaining} left)</option>`).join("")}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Time Slot * <span id="slot-hint" style="color:var(--gold);font-size:10px"></span></label>
+        <div id="slot-picker" style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto">
+          ${openSlots.map(s=>`<div class="slot-opt" id="slotopt-${s.key.replace(/[|:–]/g,'_')}" onclick="window._pickSlot('${s.key}',this)">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span class="slot-opt-label">${s.label}</span>
+              <span class="slot-opt-tag ${s.status==="warn"?"tag-warn":"tag-open"}">${s.avail} left</span>
+            </div>
+          </div>`).join("")}
+        </div>
+        <input type="hidden" id="m-slot" value="" />
+      </div>
+      <div class="form-group"><label class="form-label">Date</label><input class="form-input" id="m-date" type="date" value="${today}" /></div>
+      <div class="form-group"><label class="form-label">Session Notes</label><input class="form-input" id="m-snotes" placeholder="What did you work on?" /></div>
+      <div class="modal-actions">
+        <button class="btn btn-gold" style="flex:1" onclick="window._submitLogSession()">Log It</button>
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      </div>`);
+  };
+  window._pickSlot = (key, el) => {
+    document.querySelectorAll(".slot-opt").forEach(e=>{e.style.borderColor="";e.style.background="";});
+    el.style.borderColor="var(--gold)"; el.style.background="#1a1600";
+    document.getElementById("m-slot").value = key;
+  };
+  window._updateSlotHighlight = (playerId) => {
+    const player = players.find(p => p.id === playerId);
+    const preferredSlot = player?.preferredSlot || "";
+    document.querySelectorAll(".slot-opt").forEach(el => { el.style.borderColor=""; el.style.background=""; const t=el.querySelector(".tag-preferred"); if(t)t.remove(); });
+    if (preferredSlot) {
+      const safeKey = preferredSlot.replace(/[|:–]/g,"_");
+      const el = document.getElementById(`slotopt-${safeKey}`);
+      if (el) {
+        el.style.borderColor="var(--gold)"; el.style.background="#1a1600";
+        const tag=document.createElement("span"); tag.className="slot-opt-tag tag-preferred"; tag.textContent="⭐ Registered";
+        el.querySelector(".slot-opt-label").after(tag);
+        document.getElementById("slot-hint").textContent="⭐ = player's registered slot";
+        el.scrollIntoView({behavior:"smooth",block:"nearest"});
+      }
+    }
+  };
+  window._submitLogSession = async () => {
+    const playerId=document.getElementById("m-player")?.value, slotKey=document.getElementById("m-slot")?.value;
+    if(!playerId||!slotKey)return;
+    const player=players.find(p=>p.id===playerId); if(!player)return;
+    await logSession({playerId,playerName:player.name,slotKey,date:document.getElementById("m-date")?.value||new Date().toISOString().split("T")[0],notes:document.getElementById("m-snotes")?.value||"",createdAt:new Date()});
+    closeModal(); render();
+  };
+  window._openPromoManager = () => {
+    const codes = settings.promoCodes || [{ code:"HOOPNERDZ10", type:"fixed", value:10, active:true }];
+    showModal(`
+      <div class="modal-title">🏷️ Promo Codes</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        ${codes.length===0?`<div style="color:var(--muted);font-size:13px">No promo codes yet.</div>`:""}
+        ${codes.map((c,i) => `<div style="background:#0d0d0d;border:1px solid ${c.active?"var(--gold)":"var(--border)"};border-radius:8px;padding:12px;display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-weight:700;font-size:14px;color:${c.active?"var(--gold)":"var(--muted)"}">${c.code}</div>
+          <div style="font-size:12px;color:var(--muted)">${c.type==="free"?"100% FREE":c.type==="percent"?c.value+"% off":"$"+c.value+" off"} · <span style="color:${c.active?"var(--green)":"var(--red)"}">${c.active?"✅ Active":"❌ Inactive"}</span></div></div>
+          <button class="btn btn-sm" style="background:${c.active?"#2a0000":"#0a2a15"};color:${c.active?"var(--red)":"var(--green)"};border:1px solid ${c.active?"var(--red)":"var(--green)"}" onclick="window._togglePromo(${i})">${c.active?"Deactivate":"Activate"}</button>
+        </div>`).join("")}
+      </div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);letter-spacing:1px;margin-bottom:10px">Add New Code</div>
+      <div class="form-group"><label class="form-label">Code</label><input class="form-input" id="np-code" placeholder="e.g. SUMMER25" oninput="this.value=this.value.toUpperCase()" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Type</label><select class="form-input" id="np-type"><option value="fixed">$ Amount off</option><option value="percent">% Percent off</option><option value="free">100% Free</option></select></div>
+        <div class="form-group"><label class="form-label">Value ($/%)</label><input class="form-input" id="np-value" type="number" placeholder="e.g. 10" /></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-gold" style="flex:1" onclick="window._addPromoCode()">Add Code</button>
+        <button class="btn btn-outline" onclick="window.closeModal()">Done</button>
+      </div>`);
+  };
+  window._togglePromo = async (index) => {
+    const codes=[...(settings.promoCodes||[])]; codes[index]={...codes[index],active:!codes[index].active};
+    await setDoc(doc(db,"settings","main"),{...settings,promoCodes:codes});
+    window.closeModal(); window._openPromoManager();
+  };
+  window._addPromoCode = async () => {
+    const code=document.getElementById("np-code")?.value.trim().toUpperCase(), type=document.getElementById("np-type")?.value, value=Number(document.getElementById("np-value")?.value||0);
+    if(!code)return;
+    const codes=[...(settings.promoCodes||[])]; codes.push({code,type,value,active:true});
+    await setDoc(doc(db,"settings","main"),{...settings,promoCodes:codes});
+    window.closeModal(); window._openPromoManager();
+  };
+
+  function showModal(html) {
+    closeModal();
+    const backdrop=document.createElement("div"); backdrop.className="modal-backdrop"; backdrop.id="modal-backdrop";
+    backdrop.innerHTML=`<div class="modal">${html}</div>`;
+    backdrop.addEventListener("click",e=>{if(e.target===backdrop)closeModal();});
+    document.body.appendChild(backdrop);
+  }
+  window.closeModal = () => document.getElementById("modal-backdrop")?.remove();
+
+  if("serviceWorker"in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{});}
+  navigate("dashboard");
+</script>
+</body>
+</html>
