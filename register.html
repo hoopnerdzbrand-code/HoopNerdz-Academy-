@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HoopNerdz Academy — Register</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#ffffff;--card:#f4f4f4;--border:#e2e2e2;--gold:#d4a017;--red:#c62828;--blue:#2f6fb0;--white:#1a1a1a;--muted:#666;--green:#1f9d5c;--orange:#cc7000; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:60px;}
+    .hero{background:#ffffff;border-bottom:2px solid var(--gold);padding:20px 16px 16px;text-align:center;}
+    .hero-logo-img{width:200px;max-width:80%;margin:0 auto 8px;display:block;}
+    .hero-tagline{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+    .hero-tagline span{color:var(--gold);}
+    .container{max-width:520px;margin:0 auto;padding:24px 16px;}
+    .paused-screen{text-align:center;padding:48px 20px;}
+    .paused-icon{font-size:64px;margin-bottom:16px;}
+    .paused-title{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--red);letter-spacing:2px;margin-bottom:8px;}
+    .paused-sub{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:20px;}
+    .info-bar{background:#eaf3fb;border:1px solid #bcdcf0;border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:16px;}
+    .info-bar b{color:var(--blue);}
+    .pkg-section{margin-bottom:24px;}
+    .section-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);letter-spacing:1px;margin-bottom:12px;}
+    .pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+    .pkg-card{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center;cursor:pointer;transition:all 0.15s;position:relative;}
+    .pkg-card.selected{border-color:var(--gold);background:#fdf3d8;}
+    .pkg-card.selected::after{content:"✓";position:absolute;top:8px;right:10px;color:var(--gold);font-weight:700;font-size:14px;}
+    .pkg-sessions{font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);}
+    .pkg-price{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--red);line-height:1.1;}
+    .pkg-save{font-size:11px;color:var(--green);font-weight:600;margin-top:2px;}
+    .form-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
+    .form-card-title{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--gold);letter-spacing:1px;margin-bottom:14px;}
+    .form-group{margin-bottom:12px;}
+    .form-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:5px;}
+    .form-input{width:100%;background:#f7f7f7;border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:16px;outline:none;-webkit-appearance:none;appearance:none;}
+    .form-input:focus{border-color:var(--gold);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .required{color:var(--red);}
+    .error-msg{color:var(--red);font-size:12px;margin-top:4px;display:none;}
+    .form-input.error{border-color:var(--red);}
+    .level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+    .level-card{background:#f7f7f7;border:2px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all 0.15s;}
+    .level-card.selected-beg{border-color:var(--green);background:#e6f7ee;}
+    .level-card.selected-int{border-color:var(--blue);background:#e8f1fa;}
+    .level-card.selected-adv{border-color:var(--red);background:#fbe9e9;}
+    .level-icon{font-size:22px;margin-bottom:4px;}
+    .level-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:0.5px;}
+    .level-desc{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.3;}
+    .slot-section{display:none;}
+    .slot-section.visible{display:block;}
+    .level-schedule{border-radius:10px;padding:12px 14px;margin-top:10px;font-size:12px;line-height:1.8;}
+    .level-schedule-beg{background:#e6f7ee;border:1px solid var(--green);color:var(--green);}
+    .level-schedule-int{background:#e8f1fa;border:1px solid var(--blue);color:var(--blue);}
+    .level-schedule-adv{background:#fbe9e9;border:1px solid var(--red);color:var(--red);}
+    .payment-summary{background:#fdf3d8;border:1px solid var(--gold);border-radius:12px;padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
+    .payment-summary-label{font-size:13px;color:var(--muted);}
+    .payment-summary-amount{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold);}
+    .payment-summary-pkg{font-size:12px;color:var(--white);}
+    .payment-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .payment-btns-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+    .pay-stripe{background:#635bff;color:#fff;}
+    .pay-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:15px;cursor:pointer;border:none;text-decoration:none;transition:all 0.15s;}
+    .pay-venmo{background:#3D95CE;color:#fff;}
+    .pay-cashapp{background:#00D632;color:#000;}
+    .pay-icon{width:22px;height:22px;}
+    .submit-btn{width:100%;padding:16px;background:var(--gold);color:#000;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;border:none;border-radius:12px;cursor:pointer;margin-top:4px;}
+    .submit-btn:disabled{background:#d6d6d6;color:var(--muted);cursor:not-allowed;}
+    .success-screen{display:none;text-align:center;padding:40px 20px;}
+    .success-icon{font-size:64px;margin-bottom:16px;}
+    .success-title{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold);letter-spacing:2px;margin-bottom:8px;}
+    .success-sub{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px;}
+    .success-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:left;margin-bottom:16px;}
+    .success-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px;}
+    .success-row:last-child{border-bottom:none;}
+    .success-row-label{color:var(--muted);}
+    .success-row-val{font-weight:600;}
+    .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;}
+    .badge-beginner{background:#e6f7ee;color:var(--green);}
+    .badge-intermediate{background:#e8f1fa;color:var(--blue);}
+    .badge-advanced{background:#fbe9e9;color:var(--red);}
+    .loading{text-align:center;padding:40px;color:#666;}
+    /* DATE PICKER */
+    .week-block{margin-bottom:20px;}
+    .week-label{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;padding:6px 0 8px;border-bottom:1px solid var(--border);margin-bottom:10px;}
+    .day-block{margin-bottom:14px;}
+    .day-header{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--white);letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+    .day-header-date{color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;font-weight:400;}
+    .date-slot{display:flex;align-items:center;justify-content:space-between;background:#f7f7f7;border:1px solid var(--border);border-radius:8px;padding:11px 14px;cursor:pointer;transition:all 0.15s;margin-bottom:6px;}
+    .date-slot.selected{border-color:var(--gold);background:#fdf3d8;}
+    .date-slot.unavailable{opacity:0.4;cursor:not-allowed;}
+    .date-slot.at-limit{opacity:0.5;cursor:not-allowed;}
+    .date-slot-left{display:flex;align-items:center;gap:10px;}
+    .date-slot-check{width:20px;height:20px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;font-size:12px;font-weight:700;}
+    .date-slot.selected .date-slot-check{background:var(--gold);border-color:var(--gold);color:#000;}
+    .date-slot-time{font-weight:600;font-size:14px;}
+    .date-slot-type{font-size:11px;color:var(--muted);margin-top:1px;}
+    .date-slot-status{font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+    .date-status-open{background:#e6f7ee;color:var(--green);}
+    .date-status-warn{background:#fff2e0;color:var(--orange);}
+    .date-status-full{background:#fbe9e9;color:var(--red);}
+    .pick-counter{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);text-align:center;margin-bottom:4px;}
+    .pick-counter span{color:var(--muted);font-size:16px;font-family:'DM Sans',sans-serif;}
+    .pick-hint{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px;}
+    .selected-summary{display:none;margin-top:14px;background:#fdf3d8;border:1px solid var(--gold);border-radius:10px;padding:12px;font-size:12px;}
+    .selected-summary-title{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--gold);margin-bottom:6px;letter-spacing:1px;}
+    .selected-summary-row{padding:3px 0;border-bottom:1px solid #f0dfa8;font-size:12px;}
+    .selected-summary-row:last-child{border-bottom:none;}
+    .all-done-msg{color:var(--green);font-size:12px;margin-top:8px;font-weight:600;}
+    /* PROMO */
+    .promo-wrap{display:flex;gap:8px;align-items:center;}
+    .promo-wrap input{flex:1;}
+    .promo-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;}
+    .promo-btn:hover{border-color:var(--gold);color:var(--gold);}
+    .promo-success{background:#e6f7ee;border:1px solid var(--green);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--green);margin-top:8px;display:none;}
+    .promo-error{background:#fbe9e9;border:1px solid var(--red);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--red);margin-top:8px;display:none;}
+    .scholarship-card{background:#eaf3fb;border:1px solid var(--blue);border-radius:12px;padding:16px;margin-bottom:16px;cursor:pointer;transition:all 0.15s;}
+    .scholarship-card.selected{border-color:var(--gold);background:#fdf3d8;}
+    .scholarship-title{font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--blue);letter-spacing:1px;margin-bottom:4px;}
+    .scholarship-desc{font-size:12px;color:var(--muted);line-height:1.5;}
+    .price-original{text-decoration:line-through;color:var(--muted);font-size:20px;}
+  </style>
+</head>
+<body>
+<div class="hero">
+  <img src="03E5C7C0-AE90-4E83-B65E-ADA2E95AFD65.png" class="hero-logo-img" alt="HoopNerdz Academy" />
+  <div class="hero-tagline"><span>Training.</span> Development. <span>Results.</span></div>
+</div>
+<div class="container" id="main-container"><div class="loading">Loading...</div></div>
+<div class="success-screen" id="success-screen">
+  <div class="success-icon">🏀</div>
+  <div class="success-title">You're Registered!</div>
+  <div class="success-sub">Coach Mark will reach out to confirm your spot.<br>Send payment to lock it in.</div>
+  <div class="success-card" id="success-summary"></div>
+  <div class="payment-btns-3" style="margin-bottom:16px" id="success-pay-btns">
+    <a id="success-stripe" href="#" class="pay-btn pay-stripe" target="_blank">💳 Card</a>
+    <a id="success-venmo" href="#" class="pay-btn pay-venmo" target="_blank">Venmo</a>
+    <a id="success-cashapp" href="https://cash.app/$Nerdzbrand" class="pay-btn pay-cashapp" target="_blank">Cash App</a>
+  </div>
+  <div id="success-pay-note" class="info-bar" style="text-align:left;margin-bottom:16px;display:none"></div>
+  <div class="info-bar" style="text-align:left">📍 <b>5555 Littleflower Ave, Cincinnati OH 45237</b><br>📞 <b>513.549.7563</b> · 📸 @hoopnerdzacademy</div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, doc, onSnapshot, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAHZ_7AYsGf8WU8g8OAxorA1zM0wsXeJiU",
+    authDomain: "hoopnerdz-academy.firebaseapp.com",
+    projectId: "hoopnerdz-academy",
+    storageBucket: "hoopnerdz-academy.firebasestorage.app",
+    messagingSenderId: "413802560597",
+    appId: "1:413802560597:web:56780e2995c82ca64468dc",
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  // Stripe Payment Links
+  const STRIPE_LINKS = {
+    0: "https://buy.stripe.com/6oUeVd0YablC42t9f9a7C00", // $40 - 1 Session
+    1: "https://buy.stripe.com/bJebJ1eP075mfLbezta7C02", // $140 - 4 Sessions
+    2: "https://buy.stripe.com/7sY6oH7my9du7eF771a7C01", // $200 - 6 Sessions
+  };
+  // Format: "Day|Mon|9:00–10:00AM" / "Late|Tue|5:00–6:00PM"
+  const DAY_HOURS  = ["9:00–10:00AM","10:00–11:00AM","11:00AM–12:00PM"];
+  const LATE_HOURS = ["5:00–6:00PM","6:00–7:00PM","7:00–8:00PM"];
+  const DAY_DAYS   = ["Mon","Tue","Wed","Thu"];
+  const LATE_DAYS  = ["Tue","Wed","Thu"];
+
+  // Which day-of-week index (JS) maps to short name
+  const DOW_TO_SHORT = { 1:"Mon", 2:"Tue", 3:"Wed", 4:"Thu" };
+  const SHORT_TO_DOW = { Mon:1, Tue:2, Wed:3, Thu:4 };
+
+  // Level → which slots are available
+  const LEVEL_SLOTS = {
+    Beginner: {
+      Day:  [{ hour:"11:00AM–12:00PM", days:DAY_DAYS  }],
+      Late: [{ hour:"5:00–6:00PM",     days:LATE_DAYS }],
+    },
+    Intermediate: {
+      Day:  [{ hour:"10:00–11:00AM",   days:DAY_DAYS  }],
+      Late: [{ hour:"6:00–7:00PM",     days:LATE_DAYS }],
+    },
+    Advanced: {
+      Day:  [{ hour:"9:00–10:00AM",    days:DAY_DAYS  }],
+      Late: [{ hour:"7:00–8:00PM",     days:LATE_DAYS }],
+    },
+  };
+
+  const LEVEL_SCHEDULE_TEXT = {
+    Advanced:     "☀️ Day: 9:00–10:00AM (Mon–Thu)\n🌙 Late: 7:00–8:00PM (Tue–Thu)",
+    Intermediate: "☀️ Day: 10:00–11:00AM (Mon–Thu)\n🌙 Late: 6:00–7:00PM (Tue–Thu)",
+    Beginner:     "☀️ Day: 11:00AM–12:00PM (Mon–Thu)\n🌙 Late: 5:00–6:00PM (Tue–Thu)",
+  };
+
+  const PACKAGES = [
+    { name:"1 Session",  sessions:1, price:40  },
+    { name:"4 Sessions", sessions:4, price:140 },
+    { name:"6 Sessions", sessions:6, price:200 },
+  ];
+  const MAX_PER_SLOT = 8;
+  const DAY_NAMES   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const DAY_FULL    = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+  let sessions   = [];
+  let settings   = { allPaused:false, closedSlots:[] };
+  let promoCodes = [];
+  let appliedPromo  = null;
+  let isScholarship = false;
+  let selectedPkg   = null;
+  let selectedLevel = null;
+  let selectedDates = [];
+
+  onSnapshot(collection(db,"sessions"), snap => {
+    sessions = snap.docs.map(d=>({id:d.id,...d.data()}));
+    if (selectedLevel) renderSlots(selectedLevel);
+  });
+  onSnapshot(doc(db,"settings","main"), snap => {
+    if (snap.exists()) {
+      settings   = snap.data();
+      promoCodes = settings.promoCodes || [{ code:"HOOPNERDZ10", type:"fixed", value:10, active:true }];
+    }
+    renderPage();
+  });
+
+  // Count sessions already booked in a slot KEY (not date-specific — slot capacity is per slot key)
+  function slotCount(key) { return sessions.filter(s=>s.slotKey===key).length; }
+
+  function getSlotStatus(key) {
+    if (settings.allPaused) return "paused";
+    if ((settings.closedSlots||[]).includes(key)) return "closed";
+    const count = slotCount(key);
+    if (count >= MAX_PER_SLOT) return "full";
+    if (count >= MAX_PER_SLOT - 2) return "warn";
+    return "open";
+  }
+
+  // Build chronological date entries for a level, next 14 days
+  function buildChronoDates(lvl) {
+    const levelDef = LEVEL_SLOTS[lvl];
+    if (!levelDef) return [];
+    const today = new Date(); today.setHours(0,0,0,0);
+    const entries = [];
+
+    for (let i = 1; i <= 14; i++) {
+      const d = new Date(today); d.setDate(today.getDate()+i);
+      const dow = d.getDay();
+      const shortDay = DOW_TO_SHORT[dow];
+      if (!shortDay) continue;
+
+      // Check Day slots
+      for (const slot of levelDef.Day) {
+        if (slot.days.includes(shortDay)) {
+          const slotKey = `Day|${shortDay}|${slot.hour}`;
+          const dateStr  = d.toISOString().split("T")[0];
+          entries.push({
+            key: `${slotKey}||${dateStr}`,
+            slotKey,
+            dateStr,
+            date: new Date(d),
+            dayFull: DAY_FULL[dow],
+            monthDay: `${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`,
+            label: `${DAY_NAMES[dow]}, ${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`,
+            time: slot.hour,
+            typeLabel: "Day Session",
+            weekNum: Math.floor((i-1)/7),
+          });
+        }
+      }
+      // Check Late slots
+      for (const slot of levelDef.Late) {
+        if (slot.days.includes(shortDay)) {
+          const slotKey = `Late|${shortDay}|${slot.hour}`;
+          const dateStr  = d.toISOString().split("T")[0];
+          entries.push({
+            key: `${slotKey}||${dateStr}`,
+            slotKey,
+            dateStr,
+            date: new Date(d),
+            dayFull: DAY_FULL[dow],
+            monthDay: `${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`,
+            label: `${DAY_NAMES[dow]}, ${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`,
+            time: slot.hour,
+            typeLabel: "Late Session",
+            weekNum: Math.floor((i-1)/7),
+          });
+        }
+      }
+    }
+
+    // Sort chrono, Day before Late on same date
+    entries.sort((a,b)=>{
+      if (a.dateStr !== b.dateStr) return a.dateStr.localeCompare(b.dateStr);
+      return a.typeLabel.localeCompare(b.typeLabel);
+    });
+    return entries;
+  }
+
+  function renderPage() {
+    const container = document.getElementById("main-container");
+    if (settings.allPaused) {
+      container.innerHTML = `<div class="paused-screen">
+        <div class="paused-icon">🚫</div>
+        <div class="paused-title">Sessions Currently Paused</div>
+        <div class="paused-sub">Coach Mark has temporarily paused new registrations.<br>Check back soon or reach out directly.</div>
+        <div class="info-bar">📞 <b>513.549.7563</b><br>📸 <b>@hoopnerdzacademy</b><br>📍 <b>5555 Littleflower Ave, Cincinnati OH 45237</b></div>
+      </div>`;
+      return;
+    }
+    container.innerHTML = `
+      <!-- PACKAGE -->
+      <div class="pkg-section">
+        <div class="section-title">1. Choose Your Package</div>
+        <div class="pkg-grid">
+          <div class="pkg-card" onclick="selectPkg(0)" id="pkg-0"><div class="pkg-sessions">1 Session</div><div class="pkg-price">$40</div><div class="pkg-save">&nbsp;</div></div>
+          <div class="pkg-card" onclick="selectPkg(1)" id="pkg-1"><div class="pkg-sessions">4 Sessions</div><div class="pkg-price">$140</div><div class="pkg-save">Save $20!</div></div>
+          <div class="pkg-card" onclick="selectPkg(2)" id="pkg-2"><div class="pkg-sessions">6 Sessions</div><div class="pkg-price">$200</div><div class="pkg-save">Save $40!</div></div>
+        </div>
+      </div>
+      <!-- SKILL LEVEL -->
+      <div class="pkg-section">
+        <div class="section-title">2. Skill Level</div>
+        <div class="level-grid">
+          <div class="level-card" onclick="selectLevel('Beginner')" id="lvl-Beginner"><div class="level-icon">🟢</div><div class="level-name" style="color:var(--green)">Beginner</div><div class="level-desc">New to organized ball, ages 8–12</div></div>
+          <div class="level-card" onclick="selectLevel('Intermediate')" id="lvl-Intermediate"><div class="level-icon">🔵</div><div class="level-name" style="color:var(--blue)">Intermediate</div><div class="level-desc">Some experience, building IQ</div></div>
+          <div class="level-card" onclick="selectLevel('Advanced')" id="lvl-Advanced"><div class="level-icon">🔴</div><div class="level-name" style="color:var(--red)">Advanced</div><div class="level-desc">Varsity+ or serious player</div></div>
+        </div>
+        <div id="level-schedule-preview" style="display:none"></div>
+      </div>
+      <!-- DATE PICKER -->
+      <div class="form-card slot-section" id="slot-section">
+        <div class="form-card-title" id="slot-title">3. Pick Your Session Dates</div>
+        <div class="pick-counter" id="pick-counter">0/? <span>sessions selected</span></div>
+        <div class="pick-hint">Back-to-back days are recommended to level up faster 🔥</div>
+        <div id="chrono-slots"></div>
+        <div class="selected-summary" id="selected-summary">
+          <div class="selected-summary-title">YOUR SCHEDULE:</div>
+          <div id="selected-summary-rows"></div>
+        </div>
+      </div>
+      <!-- PLAYER INFO -->
+      <div class="form-card">
+        <div class="form-card-title">4. Player Info</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">First Name <span class="required">*</span></label><input class="form-input" id="f-first" placeholder="First name" autocomplete="given-name" /><div class="error-msg" id="err-first">Required</div></div>
+          <div class="form-group"><label class="form-label">Last Name <span class="required">*</span></label><input class="form-input" id="f-last" placeholder="Last name" autocomplete="family-name" /><div class="error-msg" id="err-last">Required</div></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Age <span class="required">*</span></label><input class="form-input" id="f-age" type="number" placeholder="Age" min="5" max="25" /><div class="error-msg" id="err-age">Required</div></div>
+          <div class="form-group"><label class="form-label">School / Team</label><input class="form-input" id="f-school" placeholder="Optional" /></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Player Photo <span style="color:var(--muted)">(Optional)</span></label>
+          <div id="photo-upload-area" onclick="document.getElementById('f-photo').click()" style="background:#f7f7f7;border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;">
+            <div id="photo-preview-wrap">
+              <div style="font-size:32px;margin-bottom:6px">📸</div>
+              <div style="font-size:13px;color:var(--muted)">Tap to add a photo of your player</div>
+              <div style="font-size:11px;color:var(--border);margin-top:4px">JPG or PNG · Max 5MB</div>
+            </div>
+          </div>
+          <input type="file" id="f-photo" accept="image/*" style="display:none" onchange="previewPhoto(this)" />
+        </div>
+      </div>
+      <!-- PARENT INFO -->
+      <div class="form-card">
+        <div class="form-card-title">5. Parent / Guardian</div>
+        <div class="form-group"><label class="form-label">Full Name <span class="required">*</span></label><input class="form-input" id="f-parent" placeholder="Parent or guardian name" autocomplete="name" /><div class="error-msg" id="err-parent">Required</div></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Phone <span class="required">*</span></label><input class="form-input" id="f-phone" type="tel" placeholder="(513) 000-0000" autocomplete="tel" /><div class="error-msg" id="err-phone">Required</div></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="f-email" type="email" placeholder="your@email.com" autocomplete="email" /></div>
+        </div>
+        <div class="form-group"><label class="form-label">Goals / Notes for Coach</label><input class="form-input" id="f-notes" placeholder="What do you want to work on?" /></div>
+      </div>
+      <!-- PROMO & SCHOLARSHIP -->
+      <div class="form-card">
+        <div class="form-card-title">6. Promo Code or Scholarship</div>
+        <div class="form-group">
+          <label class="form-label">Have a promo code?</label>
+          <div class="promo-wrap">
+            <input class="form-input" id="f-promo" placeholder="Enter code (e.g. HOOPNERDZ10)" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()" />
+            <button class="promo-btn" onclick="applyPromo()">Apply</button>
+          </div>
+          <div class="promo-success" id="promo-success">✅ <span id="promo-msg"></span></div>
+          <div class="promo-error" id="promo-error">❌ <span id="promo-err-msg">Invalid promo code</span></div>
+        </div>
+        <div class="scholarship-card" id="scholarship-card" onclick="toggleScholarship()">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div class="scholarship-title">🎓 Apply for a LeaveYourMark Scholarship</div>
+              <div class="scholarship-desc">Powered by the <b style="color:var(--blue)">LeaveYourMark (LYM) Foundation</b> — a 501(c)(3) nonprofit. Apply and a LYM Foundation representative will review within 24 hours.</div>
+              <a href="https://lymfoundation.github.io/donate/apply.html" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:inline-block;font-size:11px;color:var(--gold);font-weight:700;margin-top:6px;text-decoration:underline">Apply on the LYM Foundation site →</a>
+            </div>
+            <span id="scholarship-check" style="font-size:22px;color:var(--muted)">○</span>
+          </div>
+        </div>
+      </div>
+      <!-- PAYMENT -->
+      <div style="margin-bottom:16px">
+        <div class="section-title">7. Review & Submit</div>
+        <div class="payment-summary">
+          <div>
+            <div class="payment-summary-label">Amount Due</div>
+            <div class="payment-summary-pkg" id="pay-pkg-label">Select a package above</div>
+          </div>
+          <div>
+            <div id="pay-original" class="price-original" style="display:none"></div>
+            <div class="payment-summary-amount" id="pay-amount">—</div>
+          </div>
+        </div>
+        <div id="scholarship-notice" style="display:none;background:#eaf3fb;border:1px solid var(--blue);border-radius:10px;padding:12px;font-size:13px;color:var(--blue);margin-bottom:12px">
+          🎓 <b>LeaveYourMark (LYM) Scholarship Applied</b> — Submit your info and the Foundation will review within 24 hours. Your spot is held during review.
+        </div>
+        <div class="info-bar">✅ <b>Submit your registration first.</b> Payment instructions will appear on the next screen.</div>
+      </div>
+      <button class="submit-btn" onclick="submitForm()">REGISTER NOW</button>
+    `;
+  }
+
+  function renderSlots(lvl) {
+    const container = document.getElementById("chrono-slots");
+    if (!container) return;
+    const pkg    = selectedPkg !== null ? PACKAGES[selectedPkg] : null;
+    const needed = pkg ? pkg.sessions : 0;
+    const counterEl = document.getElementById("pick-counter");
+    if (counterEl) counterEl.innerHTML = `${selectedDates.length}/${needed} <span>sessions selected</span>`;
+
+    const entries = buildChronoDates(lvl);
+    const week0   = entries.filter(e=>e.weekNum===0);
+    const week1   = entries.filter(e=>e.weekNum===1);
+
+    function groupByDate(list) {
+      const groups={}, order=[];
+      for (const e of list) {
+        if (!groups[e.dateStr]) { groups[e.dateStr]=[]; order.push(e.dateStr); }
+        groups[e.dateStr].push(e);
+      }
+      return order.map(d=>({ dateStr:d, entries:groups[d] }));
+    }
+
+    function slotHTML(e) {
+      const status     = getSlotStatus(e.slotKey);
+      const isFull     = status==="full"||status==="closed"||status==="paused";
+      const isSelected = selectedDates.some(s=>s.key===e.key);
+      const atLimit    = selectedDates.length>=needed && !isSelected;
+      const unavailable= isFull && !isSelected;
+      const count  = slotCount(e.slotKey);
+      const avail  = MAX_PER_SLOT - count;
+
+      let statusClass="date-status-open", statusText=`${avail} left`;
+      if (isFull)       { statusClass="date-status-full"; statusText=status==="closed"?"Closed":"Full"; }
+      else if (avail<=2){ statusClass="date-status-warn"; }
+
+      const disabledClass = unavailable?"unavailable":(atLimit&&!isSelected?"at-limit":"");
+      const clickable     = !unavailable && (!atLimit||isSelected);
+
+      return `<div class="date-slot ${isSelected?"selected":""} ${disabledClass}"
+        ${clickable?`onclick="toggleDate('${e.key}','${e.slotKey}','${e.dateStr}','${e.label}','${e.time}','${e.typeLabel}')"`:""}>
+        <div class="date-slot-left">
+          <div class="date-slot-check">${isSelected?"✓":""}</div>
+          <div>
+            <div class="date-slot-time">${e.time}</div>
+            <div class="date-slot-type">${e.typeLabel}</div>
+          </div>
+        </div>
+        <span class="date-slot-status ${statusClass}">${statusText}</span>
+      </div>`;
+    }
+
+    function weekHTML(groups, weekLabel) {
+      if (!groups.length) return "";
+      return `<div class="week-block">
+        <div class="week-label">${weekLabel}</div>
+        ${groups.map(g=>`<div class="day-block">
+          <div class="day-header">${g.entries[0].dayFull}<span class="day-header-date">${g.entries[0].monthDay}</span></div>
+          ${g.entries.map(slotHTML).join("")}
+        </div>`).join("")}
+      </div>`;
+    }
+
+    const today   = new Date();
+    const w0start = new Date(today); w0start.setDate(today.getDate()+1);
+    const w1start = new Date(today); w1start.setDate(today.getDate()+8);
+    container.innerHTML =
+      weekHTML(groupByDate(week0), `Week of ${MONTH_NAMES[w0start.getMonth()]} ${w0start.getDate()}`) +
+      weekHTML(groupByDate(week1), `Week of ${MONTH_NAMES[w1start.getMonth()]} ${w1start.getDate()}`);
+
+    // Summary
+    const summary     = document.getElementById("selected-summary");
+    const summaryRows = document.getElementById("selected-summary-rows");
+    if (summary && summaryRows) {
+      if (selectedDates.length > 0) {
+        summary.style.display = "block";
+        summaryRows.innerHTML = selectedDates
+          .slice().sort((a,b)=>a.dateStr.localeCompare(b.dateStr))
+          .map((d,i)=>`<div class="selected-summary-row">${i+1}. ${d.label} · ${d.time}</div>`)
+          .join("") +
+          (selectedDates.length===needed?`<div class="all-done-msg">✅ All ${needed} session${needed>1?"s":""} selected!</div>`:"");
+      } else { summary.style.display="none"; }
+    }
+  }
+
+  window.toggleDate = (key,slotKey,dateStr,label,time,typeLabel) => {
+    const pkg    = selectedPkg!==null ? PACKAGES[selectedPkg] : null;
+    const needed = pkg ? pkg.sessions : 1;
+    const idx    = selectedDates.findIndex(d=>d.key===key);
+    if (idx>=0) { selectedDates.splice(idx,1); }
+    else {
+      if (selectedDates.length>=needed) return;
+      selectedDates.push({key,slotKey,dateStr,label,time,typeLabel});
+    }
+    renderSlots(selectedLevel);
+  };
+
+  window.selectPkg = (i) => {
+    selectedPkg=i; selectedDates=[];
+    document.querySelectorAll(".pkg-card").forEach((c,idx)=>c.classList.toggle("selected",idx===i));
+    updatePaymentDisplay();
+    if (selectedLevel) renderSlots(selectedLevel);
+  };
+
+  window.selectLevel = (lvl) => {
+    selectedLevel=lvl; selectedDates=[];
+    ["Beginner","Intermediate","Advanced"].forEach(l=>{
+      document.getElementById("lvl-"+l)?.classList.remove("selected-beg","selected-int","selected-adv");
+    });
+    const map={Beginner:"selected-beg",Intermediate:"selected-int",Advanced:"selected-adv"};
+    document.getElementById("lvl-"+lvl)?.classList.add(map[lvl]);
+    const preview=document.getElementById("level-schedule-preview");
+    const clsMap={Beginner:"level-schedule-beg",Intermediate:"level-schedule-int",Advanced:"level-schedule-adv"};
+    if(preview){preview.style.display="block";preview.innerHTML=`<div class="level-schedule ${clsMap[lvl]}" style="white-space:pre-line">${LEVEL_SCHEDULE_TEXT[lvl]}</div>`;}
+    document.getElementById("slot-section")?.classList.add("visible");
+    renderSlots(lvl);
+  };
+
+  function getDiscountedPrice(originalPrice) {
+    if (isScholarship) return 0;
+    if (!appliedPromo) return originalPrice;
+    if (appliedPromo.type==="free") return 0;
+    if (appliedPromo.type==="percent") return Math.max(0,Math.round(originalPrice*(1-appliedPromo.value/100)));
+    if (appliedPromo.type==="fixed") return Math.max(0,originalPrice-appliedPromo.value);
+    return originalPrice;
+  }
+
+  function updatePaymentDisplay() {
+    if (selectedPkg===null) return;
+    const pkg=PACKAGES[selectedPkg], original=pkg.price, discounted=getDiscountedPrice(original);
+    const note=encodeURIComponent("HoopNerdz Academy Training");
+    const amountEl=document.getElementById("pay-amount");
+    const originalEl=document.getElementById("pay-original");
+    const lbl=document.getElementById("pay-pkg-label");
+    if (amountEl) amountEl.textContent=discounted===0?"$0 🎓":"$"+discounted;
+    if (originalEl){if(discounted<original){originalEl.textContent="$"+original;originalEl.style.display="block";}else{originalEl.style.display="none";}}
+    if (lbl) lbl.textContent=pkg.name+(appliedPromo?` · Code: ${appliedPromo.code}`:isScholarship?" · Scholarship":"");
+    const btns=document.getElementById("payment-btns");
+    const notice=document.getElementById("scholarship-notice");
+    const info=document.getElementById("payment-info");
+    const payNote=document.getElementById("success-pay-note");
+    const spb=document.getElementById("success-pay-btns");
+    if (discounted===0){
+      if(btns)btns.style.display="none";
+      if(notice)notice.style.display=isScholarship?"block":"none";
+      if(info)info.innerHTML=isScholarship?"🎓 Submit your info. Coach Mark will review your scholarship request within 24 hours.":"🎉 Your promo code covers the full cost! Just submit to register.";
+      if(payNote)payNote.style.display="none";
+    } else {
+      if(btns)btns.style.display="grid";
+      if(notice)notice.style.display="none";
+      if(info)info.innerHTML="💳 <b>Pay after submitting.</b> Spots held 24 hours after registration.";
+      // Stripe Payment Links are fixed-price and can't reflect promo discounts —
+      // only offer Card when the full price is due. Venmo/Cash App always get the correct amount.
+      const hasDiscount=discounted<original;
+      const sb=document.getElementById("stripe-btn");
+      if(sb){sb.href=STRIPE_LINKS[selectedPkg]||"#";sb.style.display=hasDiscount?"none":"";}
+      const ssb=document.getElementById("success-stripe");
+      if(ssb){ssb.href=STRIPE_LINKS[selectedPkg]||"#";ssb.style.display=hasDiscount?"none":"";}
+      if(spb)spb.style.gridTemplateColumns=hasDiscount?"1fr 1fr":"1fr 1fr 1fr";
+      const vb=document.getElementById("venmo-btn");
+      if(vb)vb.href=`https://venmo.com/Nerdzbrand?txn=pay&amount=${discounted}&note=${note}`;
+      const sv=document.getElementById("success-venmo");
+      if(sv)sv.href=`https://venmo.com/Nerdzbrand?txn=pay&amount=${discounted}&note=${note}`;
+      const cb=document.getElementById("cashapp-btn");
+      if(cb)cb.href=`https://cash.app/$Nerdzbrand/${discounted}`;
+      const scap=document.getElementById("success-cashapp");
+      if(scap)scap.href=`https://cash.app/$Nerdzbrand/${discounted}`;
+      if(payNote){
+        if(hasDiscount){
+          payNote.style.display="block";
+          payNote.innerHTML=`⚠️ <b>Card checkout can't apply promo pricing.</b> Please pay your discounted total of $${discounted} via Venmo or Cash App above.`;
+        } else {
+          payNote.style.display="none";
+        }
+      }
+    }
+  }
+
+  window.applyPromo = () => {
+    const code=document.getElementById("f-promo")?.value.trim().toUpperCase();
+    const successEl=document.getElementById("promo-success"),errorEl=document.getElementById("promo-error");
+    const msgEl=document.getElementById("promo-msg"),errEl=document.getElementById("promo-err-msg");
+    successEl.style.display="none"; errorEl.style.display="none";
+    if(!code){errorEl.style.display="block";errEl.textContent="Please enter a promo code.";return;}
+    const found=promoCodes.find(p=>p.code===code&&p.active);
+    if(!found){errorEl.style.display="block";errEl.textContent="Invalid or expired promo code.";return;}
+    appliedPromo=found; isScholarship=false;
+    document.getElementById("scholarship-card").classList.remove("selected");
+    document.getElementById("scholarship-check").textContent="○";
+    const discountText=found.type==="free"?"100% off — FREE!":found.type==="percent"?`${found.value}% off`:`$${found.value} off`;
+    successEl.style.display="block"; msgEl.textContent=`Code applied! ${discountText}`;
+    updatePaymentDisplay();
+  };
+
+  window.toggleScholarship = () => {
+    isScholarship=!isScholarship; appliedPromo=null;
+    document.getElementById("f-promo").value="";
+    document.getElementById("promo-success").style.display="none";
+    document.getElementById("promo-error").style.display="none";
+    const card=document.getElementById("scholarship-card"),check=document.getElementById("scholarship-check");
+    if(isScholarship){card.classList.add("selected");check.textContent="✓";check.style.color="var(--gold)";}
+    else{card.classList.remove("selected");check.textContent="○";check.style.color="var(--muted)";}
+    updatePaymentDisplay();
+  };
+
+  window.previewPhoto = (input) => {
+    const file=input.files[0]; if(!file)return;
+    if(file.size>5*1024*1024){alert("Photo must be under 5MB.");input.value="";return;}
+    const reader=new FileReader();
+    reader.onload=(e)=>{
+      const wrap=document.getElementById("photo-preview-wrap"),area=document.getElementById("photo-upload-area");
+      if(wrap){wrap.innerHTML=`<img src="${e.target.result}" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);margin-bottom:6px" /><div style="font-size:12px;color:var(--green)">✅ Photo added</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Tap to change</div>`;}
+      if(area)area.style.borderColor="var(--gold)";
+    };
+    reader.readAsDataURL(file);
+  };
+
+  async function uploadPhoto(file,playerId) {
+    if(!file)return null;
+    try{const storageRef=ref(storage,`players/${playerId}/photo.jpg`);await uploadBytes(storageRef,file);return await getDownloadURL(storageRef);}
+    catch(e){console.log("Photo upload failed",e);return null;}
+  }
+
+  window.submitForm = async () => {
+    let ok=true;
+    [{ id:"f-first",err:"err-first"},{id:"f-last",err:"err-last"},{id:"f-age",err:"err-age"},{id:"f-parent",err:"err-parent"},{id:"f-phone",err:"err-phone"}]
+      .forEach(({id,err})=>{
+        const el=document.getElementById(id),msg=document.getElementById(err);
+        if(!el?.value.trim()){el?.classList.add("error");if(msg)msg.style.display="block";ok=false;}
+        else{el?.classList.remove("error");if(msg)msg.style.display="none";}
+      });
+    if(selectedPkg===null){alert("Please choose a package.");ok=false;}
+    if(!selectedLevel){alert("Please select a skill level.");ok=false;}
+    const pkg=PACKAGES[selectedPkg];
+    if(selectedDates.length<(pkg?.sessions||1)){alert(`Please select all ${pkg?.sessions||1} session dates.`);ok=false;}
+    if(!ok)return;
+    const originalPrice=pkg.price, finalPrice=getDiscountedPrice(originalPrice);
+    const btn=document.querySelector(".submit-btn");
+    if(btn){btn.disabled=true;btn.textContent="Submitting...";}
+    const sortedDates=selectedDates.slice().sort((a,b)=>a.dateStr.localeCompare(b.dateStr));
+    const player={
+      name:document.getElementById("f-first").value.trim()+" "+document.getElementById("f-last").value.trim(),
+      age:document.getElementById("f-age").value.trim(),
+      level:selectedLevel, package:selectedPkg,
+      sessionsRemaining:pkg.sessions, sessionsAttended:0,
+      notes:[document.getElementById("f-notes").value,document.getElementById("f-school").value?"School: "+document.getElementById("f-school").value:""].filter(Boolean).join(" | "),
+      joinDate:new Date().toISOString(),
+      preferredSlot:sortedDates.length>0?sortedDates[0].slotKey:null,
+      bookedDates:sortedDates.map(d=>({ date:d.dateStr, label:d.label, time:d.time, slotKey:d.slotKey })),
+      parentName:document.getElementById("f-parent").value.trim(),
+      parentPhone:document.getElementById("f-phone").value.trim(),
+      parentEmail:document.getElementById("f-email").value.trim(),
+      promoCode:appliedPromo?.code||"",
+      promoDiscount:originalPrice-finalPrice,
+      isScholarship, amountPaid:finalPrice, originalAmount:originalPrice,
+      status:isScholarship?"scholarship_pending":finalPrice===0?"confirmed":"pending_payment",
+      createdAt:new Date(),
+    };
+    try{
+      const docRef=await addDoc(collection(db,"players"),player);
+      const photoFile=document.getElementById("f-photo")?.files[0];
+      if(photoFile){
+        const photoUrl=await uploadPhoto(photoFile,docRef.id);
+        if(photoUrl){await updateDoc(doc(db,"players",docRef.id),{photoUrl});player.photoUrl=photoUrl;}
+        else{player.photoUploadFailed=true;}
+      }
+      showSuccess(player,pkg,finalPrice,sortedDates);
+    }catch(e){
+      alert("Error submitting. Please try again.");
+      if(btn){btn.disabled=false;btn.textContent="REGISTER NOW";}
+    }
+  };
+
+  function showSuccess(player,pkg,finalPrice,sortedDates){
+    document.getElementById("main-container").style.display="none";
+    const screen=document.getElementById("success-screen"); screen.style.display="block";
+    const amountLabel=player.isScholarship?"🎓 Scholarship — Pending Review":finalPrice===0?"FREE 🎉":`$${finalPrice}`;
+    document.getElementById("success-summary").innerHTML=`
+      <div class="success-row"><span class="success-row-label">Player</span><span class="success-row-val">${player.name}</span></div>
+      <div class="success-row"><span class="success-row-label">Age</span><span class="success-row-val">${player.age}</span></div>
+      <div class="success-row"><span class="success-row-label">Level</span><span class="success-row-val"><span class="badge badge-${player.level.toLowerCase()}">${player.level}</span></span></div>
+      <div class="success-row"><span class="success-row-label">Package</span><span class="success-row-val">${pkg.name}</span></div>
+      <div class="success-row"><span class="success-row-label">Amount Due</span><span class="success-row-val" style="color:var(--gold)">${amountLabel}</span></div>
+      <div class="success-row"><span class="success-row-label">Session${sortedDates.length>1?"s":""}</span><span class="success-row-val">${sortedDates.map((d,i)=>`${i+1}. ${d.label} · ${d.time}`).join("<br>")}</span></div>
+      ${player.promoCode?`<div class="success-row"><span class="success-row-label">Promo</span><span class="success-row-val" style="color:var(--green)">✅ ${player.promoCode} (-$${player.promoDiscount})</span></div>`:""}
+      <div class="success-row"><span class="success-row-label">Contact</span><span class="success-row-val">${player.parentPhone}</span></div>
+    `;
+    if(player.photoUploadFailed){
+      const wrap=document.getElementById("success-summary");
+      if(wrap)wrap.insertAdjacentHTML("beforeend",`<div style="margin-top:10px;padding:10px;background:#fff2e0;border:1px solid var(--orange);border-radius:8px;font-size:12px;color:var(--orange)">⚠️ Photo couldn't upload — everything else saved fine. Coach Mark can add it later.</div>`);
+    }
+    if(finalPrice===0){const btns=document.getElementById("success-pay-btns");if(btns)btns.style.display="none";}
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+</script>
+</body>
+</html>
